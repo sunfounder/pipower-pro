@@ -1,0 +1,475 @@
+esphome:
+  name: "pipower-pro-a03846"
+  friendly_name: PiPower Pro
+  comment: Smart UPS module
+  # name_add_mac_suffix: true
+  project:
+    name: "sunfounder.pipower-pro"
+    version: "1.0.0"
+  includes:
+    - current_control.h
+  on_boot:
+    priority: -100.0
+    then:
+      - switch.turn_on: pipower_pro_esp32_power
+
+esp32:
+  board: esp32-s2-saola-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "8tVXjxlWsJehjeWQKjx4JUKjUvasxOiilEGVq6DrYk0="
+
+ota:
+  password: "4ee636fc0241001a3e0c7b2ca9476c4d"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Pipower-Pro Fallback Hotspot"
+    password: "12345678"
+
+captive_portal:
+    
+
+globals:
+  - id: pipower_pro_battery_max_capacitor
+    type: int
+    restore_value: no
+    initial_value: '2000'
+  - id: pipower_pro_battery_capacitor
+    type: float
+    restore_value: yes
+    initial_value: '2000'
+  - id: pipower_pro_power_switch_current_state
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+  - id: pipower_pro_charge_control_value
+    type: float
+    restore_value: no
+    initial_value: '0'
+  - id: pipower_pro_charge_control_last_error
+    type: float
+    restore_value: no
+    initial_value: '0'
+  - id: pipower_pro_charge_control_error_integral
+    type: float
+    restore_value: no
+    initial_value: '0'
+
+
+output:
+  - platform: custom
+    type: float
+    lambda: |-
+      auto cc = new CurrentControl();
+      App.register_component(cc);
+      return {cc};
+    outputs:
+      id: pipower_pro_charge_current_control
+
+
+switch:
+  - platform: gpio
+    name: Battery Output
+    id: pipower_pro_battery_output
+    # internal: true
+    pin: 
+      number: 33
+      inverted: false
+  - platform: gpio
+    name: External Output
+    id: pipower_pro_external_output
+    # internal: true
+    pin: 
+      number: 15
+      inverted: false
+  - platform: gpio
+    name: ESP32 Power
+    id: pipower_pro_esp32_power
+    # internal: true
+    pin: 
+      number: 18
+      inverted: false
+  - platform: template
+    name: Power Switch
+    id: pipower_pro_power_switch
+    icon: mdi:power
+    device_class: SWITCH
+    restore_mode : RESTORE_DEFAULT_OFF
+    lambda: |-
+      if (id(pipower_pro_power_switch_current_state)) {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+      - switch.turn_on: pipower_pro_external_output
+      - switch.turn_on: pipower_pro_battery_output
+      - switch.turn_on: pipower_pro_esp32_power
+      - lambda: id(pipower_pro_power_switch_current_state) = true;
+    turn_off_action:
+      - switch.turn_off: pipower_pro_external_output
+      - switch.turn_off: pipower_pro_battery_output
+      - switch.turn_off: pipower_pro_esp32_power
+      - lambda: id(pipower_pro_power_switch_current_state) = false;
+  - platform: gpio
+    name: Battery Indicator 25
+    id: pipower_pro_battery_indicator_25
+    internal: true
+    restore_mode: DISABLED
+    pin: 
+      number: 11
+      inverted: true
+  - platform: gpio
+    name: Battery Indicator 50
+    id: pipower_pro_battery_indicator_50
+    internal: true
+    restore_mode: DISABLED
+    pin: 
+      number: 12
+      inverted: true
+  - platform: gpio
+    name: Battery Indicator 75
+    id: pipower_pro_battery_indicator_75
+    internal: true
+    restore_mode: DISABLED
+    pin: 
+      number: 13
+      inverted: true
+  - platform: gpio
+    name: Battery Indicator 100
+    id: pipower_pro_battery_indicator_100
+    internal: true
+    restore_mode: DISABLED
+    pin: 
+      number: 14
+      inverted: true
+  - platform: gpio
+    name: Charge Enable
+    pin: 
+      number: 17
+      inverted: true
+
+
+sensor:
+  # Battery
+  - platform: adc
+    pin: 3
+    name: Battery Voltage
+    id: pipower_pro_battery_voltage
+    attenuation: 11db
+    update_interval: 1s
+    accuracy_decimals: 1
+    unit_of_measurement: V
+    # raw: true
+    filters:
+      # 2.669 / 8191
+      # - multiply: 0.00032584544011720
+      # 120K : 51K resistor divider
+      - lambda: return x * (120.0f + 51.0f) / 51.0f;
+  - platform: adc
+    pin: 5
+    name: Battery Current
+    id: pipower_pro_battery_current
+    attenuation: 11db
+    update_interval: 1s
+    accuracy_decimals: 1
+    unit_of_measurement: A
+    # raw: true
+    filters:
+      # 2.669 / 8191
+      # - multiply: 0.00032584544011720
+      # Differencial amplified 100 times, devided by 0.005 ohm resistor
+      # with 1.4v reference voltage, makes it bidirectional.
+      - lambda: |-
+          ESP_LOGD("Battery Current", "Raw: %f", x);
+          return -(x - 1.43f) / 100.0f / 0.005f;
+  - platform: template
+    name: Battery Power
+    id: pipower_pro_battery_power
+    update_interval: 1s
+    unit_of_measurement: W
+    accuracy_decimals: 1
+    device_class: power
+    lambda: return id(pipower_pro_battery_voltage).state * id(pipower_pro_battery_current).state;
+  - platform: template
+    name: Battery Capacitor
+    id: pipower_pro_battery_capacity
+    unit_of_measurement: mAh
+    update_interval: 1s
+    device_class: energy
+    accuracy_decimals: 0
+    lambda: |-
+      // ESP_LOGD("main", "Battery Capacitor: %f mAh", id(pipower_pro_battery_capacitor));
+      // float capacitor = id(pipower_pro_battery_capacitor);
+      // ESP_LOGD("main", "Battery Capacitor: %f mAh", capacitor);
+      // capacitor += id(pipower_pro_battery_current).state * 1000 / 3600.0f;
+      // ESP_LOGD("main", "Battery Capacitor: %f mAh", capacitor);
+      // if (capacitor > id(pipower_pro_battery_max_capacitor)) capacitor = id(pipower_pro_battery_max_capacitor);
+      // if (capacitor < 0) capacitor = 0;
+      // ESP_LOGD("main", "Battery Capacitor: %f mAh", capacitor);
+      // id(pipower_pro_battery_capacitor) = capacitor;
+      // return capacitor;
+      if (!id(pipower_pro_battery_current).has_state()) return false;
+      id(pipower_pro_battery_capacitor) += id(pipower_pro_battery_current).state * 1000 / 3600.0f;
+      if (id(pipower_pro_battery_capacitor) > id(pipower_pro_battery_max_capacitor)) {
+        id(pipower_pro_battery_capacitor) = id(pipower_pro_battery_max_capacitor);
+      }
+      if (id(pipower_pro_battery_capacitor) < 0) {
+        id(pipower_pro_battery_capacitor) = 0;
+      }
+      return id(pipower_pro_battery_capacitor);
+  - platform: integration
+    name: Battery Capacitor2
+    id: pipower_pro_battery_capacity2
+    sensor: pipower_pro_battery_current
+    unit_of_measurement: mAh
+    accuracy_decimals: 0
+    device_class: energy
+    time_unit: s
+    restore: true
+    filters:
+      - lambda: |-
+          float capacitor = - x * 1000 / 3600.0f;
+          ESP_LOGD("main", "Battery Capacitor: %f mAh", capacitor);
+          if (capacitor > id(pipower_pro_battery_max_capacitor)) capacitor = id(pipower_pro_battery_max_capacitor);
+          if (capacitor < 0) {
+            capacitor = 0;
+            id(pipower_pro_battery_capacity2).reset();
+          }
+          ESP_LOGD("main", "Battery Capacitor: %f mAh", capacitor);
+          return capacitor;
+  - platform: template
+    name: Battery Level
+    id: pipower_pro_battery_level
+    update_interval: 1s
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    device_class: battery
+    lambda: return id(pipower_pro_battery_capacity).state / id(pipower_pro_battery_max_capacitor) * 100.0f;
+    on_value:
+      then:
+        - lambda: |-
+            if (id(pipower_pro_power_switch_current_state) == true || id(pipower_pro_is_charging).state == true) {
+              float level = id(pipower_pro_battery_level).state;
+              if (level > 75) {
+                id(pipower_pro_battery_indicator_25).turn_on();
+                id(pipower_pro_battery_indicator_50).turn_on();
+                id(pipower_pro_battery_indicator_75).turn_on();
+                if (id(pipower_pro_is_charging).state == true) {
+                  id(pipower_pro_battery_indicator_100).toggle();
+                } else {
+                  id(pipower_pro_battery_indicator_100).turn_on();
+                }
+              } else if (level > 50) {
+                id(pipower_pro_battery_indicator_25).turn_on();
+                id(pipower_pro_battery_indicator_50).turn_on();
+                id(pipower_pro_battery_indicator_100).turn_off();
+                if (id(pipower_pro_is_charging).state == true) {
+                  id(pipower_pro_battery_indicator_75).toggle();
+                } else {
+                  id(pipower_pro_battery_indicator_75).turn_on();
+                }
+              } else if (level > 25) {
+                id(pipower_pro_battery_indicator_25).turn_on();
+                id(pipower_pro_battery_indicator_75).turn_off();
+                id(pipower_pro_battery_indicator_100).turn_off();
+                if (id(pipower_pro_is_charging).state == true) {
+                  id(pipower_pro_battery_indicator_50).toggle();
+                } else {
+                  id(pipower_pro_battery_indicator_50).turn_on();
+                }
+              } else if (level > 10) {
+                id(pipower_pro_battery_indicator_50).turn_off();
+                id(pipower_pro_battery_indicator_75).turn_off();
+                id(pipower_pro_battery_indicator_100).turn_off();
+                if (id(pipower_pro_is_charging).state == true) {
+                  id(pipower_pro_battery_indicator_25).toggle();
+                } else {
+                  id(pipower_pro_battery_indicator_25).turn_on();
+                }
+              } else {
+                id(pipower_pro_battery_indicator_50).turn_off();
+                id(pipower_pro_battery_indicator_75).turn_off();
+                id(pipower_pro_battery_indicator_100).turn_off();
+                if (id(pipower_pro_is_charging).state == true) {
+                  id(pipower_pro_battery_indicator_25).toggle();
+                } else {
+                  id(pipower_pro_battery_indicator_25).turn_off();
+                }
+              }
+            } else {
+              id(pipower_pro_battery_indicator_25).turn_off();
+              id(pipower_pro_battery_indicator_50).turn_off();
+              id(pipower_pro_battery_indicator_75).turn_off();
+              id(pipower_pro_battery_indicator_100).turn_off();
+            } 
+  # Output
+  - platform: adc
+    pin: 1
+    name: Output Voltage
+    id: pipower_pro_output_voltage
+    attenuation: 11db
+    update_interval: 1s
+    unit_of_measurement: V
+    accuracy_decimals: 1
+    # raw: true
+    filters:
+      # 2.669 / 8191
+      # - multiply: 0.00032584544011720
+      # 100K : 100K resistor divider
+      - lambda: return x * 2.0f;
+  - platform: adc
+    pin: 4
+    name: Output Current
+    id: pipower_pro_output_current
+    attenuation: 11db
+    update_interval: 1s
+    accuracy_decimals: 1
+    unit_of_measurement: A
+    # raw: true
+    filters:
+      # 2.669 / 8191
+      # - multiply: 0.00032584544011720
+      # Differencial amplified 100 times, devided by 0.005 ohm resistor.
+      - lambda: return x / 100.0f / 0.005f;
+  - platform: template
+    name: Output Power
+    id: "pipower_pro_output_power"
+    update_interval: 1s
+    unit_of_measurement: W
+    device_class: power
+    lambda: return id(pipower_pro_output_voltage).state * id(pipower_pro_output_current).state;
+  - platform: integration
+    name: Output Energy
+    id: "pipower_pro_output_energy"
+    sensor: pipower_pro_output_power
+    unit_of_measurement: Wh
+    device_class: energy
+    time_unit: s
+    filters:
+      - lambda: return x / 3600.0f;
+
+  - platform: adc
+    pin: 2
+    name: Input Voltage
+    id: pipower_pro_input_voltage
+    attenuation: 11db
+    update_interval: 1s
+    accuracy_decimals: 1
+    unit_of_measurement: V
+    # raw: true
+    filters:
+      # 2.669 / 8191
+      # - multiply: 0.00032584544011720
+      # 100K : 100K resistor divider
+      - lambda: return x * 2.0f;
+    # on_value:
+    #   then:
+    #     - lambda: |-
+    #         // PID control for battery charging
+    #         // if not charging, do nothing
+    #         if (!id(pipower_pro_is_charging).state) return;
+    #         if (!id(pipower_pro_power_switch_current_state)) {
+    #           id(pipower_pro_charge_current_control).set_level(1);
+    #           return;
+    #         }
+    #         float state = id(pipower_pro_input_voltage).state;
+    #         float targetVoltage = 4.9f;
+    #         float kp = 0.1f;
+    #         float ki = 0.0f;
+    #         float kd = 0.1f;
+    #         float error = targetVoltage - state;
+    #         float offset = kp * error + ki * id(pipower_pro_charge_control_error_integral) + kd * (error - id(pipower_pro_charge_control_last_error));
+    #         id(pipower_pro_charge_control_error_integral) += error;
+    #         id(pipower_pro_charge_control_last_error) = error;
+    #         id(pipower_pro_charge_control_value) -= offset;
+    #         if (id(pipower_pro_charge_control_value) > 1.0f) id(pipower_pro_charge_control_value) = 1.0f;
+    #         if (id(pipower_pro_charge_control_value) < 0.0f) id(pipower_pro_charge_control_value) = 0.0f;
+    #         ESP_LOGD("main", "Input voltage: %f, target: %f, error: %f, offset: %f, charge control: %f", state, targetVoltage, error, offset, id(pipower_pro_charge_control_value));
+    #         id(pipower_pro_charge_current_control).set_level(id(pipower_pro_charge_control_value));
+  - platform: template
+    name: Power Source
+    device_class: power
+    update_interval: 1s
+    lambda: |-
+      // 0: OFF, 1: External, -1: Battery
+      if (id(pipower_pro_power_switch_current_state) == false) {
+        return 0;
+      } else if (id(pipower_pro_power_source_state).state) {
+        return 1;
+      } else {
+        return -1;
+      }
+
+binary_sensor:
+  - platform: gpio
+    pin: 21
+    name: Is Charging
+    id: pipower_pro_is_charging
+    device_class: BATTERY_CHARGING
+  - platform: gpio
+    pin: 
+      number: 16
+      inverted: true
+    name: Power Button
+    on_click:
+    - min_length: 50ms
+      max_length: 1000ms
+      then:
+        - switch.turn_on: pipower_pro_power_switch
+    on_multi_click:
+    - timing:
+        - ON for at least 3s
+      then:
+        - switch.turn_off: pipower_pro_power_switch
+  - platform: template
+    name: Battery Low
+    device_class: BATTERY
+    lambda: |-
+      if (id(pipower_pro_battery_level).state < 0.1) {
+        return true;
+      } else {
+        return false;
+      }
+  - platform: template
+    name: External Power
+    device_class: PLUG
+    lambda: |-
+      if (id(pipower_pro_input_voltage).state > 4.0) {
+        return true;
+      } else {
+        return false;
+      }
+  - platform: gpio
+    pin: 34
+    internal: true
+    id: pipower_pro_power_source_state
+
+
+button:
+  - platform: template
+    name: Capacitor Reset
+    icon: mdi:battery-sync
+    on_press:
+      then:
+        - lambda: |-
+            id(pipower_pro_battery_capacitor) = id(pipower_pro_battery_max_capacitor);
+  - platform: template
+    name: Output Energy Reset
+    icon: mdi:sync
+    on_press:
+      then:
+        - lambda: |-
+            id(pipower_pro_output_energy).reset();
