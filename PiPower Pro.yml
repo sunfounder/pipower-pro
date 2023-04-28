@@ -5,7 +5,7 @@ esphome:
   name: "pipower-pro"
   friendly_name: PiPower Pro
   comment: Smart UPS module
-  name_add_mac_suffix: true
+  # name_add_mac_suffix: true
   project:
     name: "sunfounder.pipower-pro"
     version: ${version}
@@ -31,17 +31,14 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging
 logger:
   level: WARN
 
-# Enable Home Assistant API
 api:
-  encryption:
-    key: "8tVXjxlWsJehjeWQKjx4JUKjUvasxOiilEGVq6DrYk0="
 
 ota:
-  password: "4ee636fc0241001a3e0c7b2ca9476c4d"
+
+web_server:
 
 wifi:
   ssid: !secret wifi_ssid
