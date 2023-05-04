@@ -1,5 +1,6 @@
 substitutions:
   version: "v1.0.0"
+  factory_max_capacity: "2000"
 
 esphome:
   name: "pipower-pro"
@@ -298,7 +299,7 @@ sensor:
       # Differencial amplified 100 times, devided by 0.005 ohm resistor
       # with 1.4v reference voltage, makes it bidirectional.
       - lambda: |-
-          return -(x - 1.43f) / 100.0f / 0.005f;
+          return -(x - 1.25f) / 100.0f / 0.005f;
   # Battery Power
   - platform: template
     name: Battery Power
@@ -319,8 +320,8 @@ sensor:
     lambda: |-
       if (!id(pipower_pro_battery_current).has_state()) return false;
       id(pipower_pro_battery_current_capacity) += id(pipower_pro_battery_current).state * 1000 / 3600.0f;
-      if (id(pipower_pro_battery_current_capacity) > id(pipower_pro_battery_factory_capacity)) {
-        id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_factory_capacity);
+      if (id(pipower_pro_battery_current_capacity) > $factory_max_capacity) {
+        id(pipower_pro_battery_current_capacity) = $factory_max_capacity;
       }
       if  (id(pipower_pro_battery_current_capacity) > id(pipower_pro_battery_max_capacity)) {
         id(pipower_pro_battery_max_capacity) = id(pipower_pro_battery_current_capacity);
