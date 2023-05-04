@@ -1,6 +1,3 @@
-substitutions:
-  name: pipower-pro
-  friendly_name: PiPower Pro
 
 esphome:
   name: "${name}"
@@ -50,10 +47,6 @@ wifi:
 captive_portal:
 
 globals:
-  - id: pipower_pro_battery_factory_capacity
-    type: float
-    restore_value: yes
-    initial_value: '2000'
   - id: pipower_pro_battery_max_capacity
     type: float
     restore_value: yes
@@ -316,8 +309,8 @@ sensor:
     lambda: |-
       if (!id(pipower_pro_battery_current).has_state()) return false;
       id(pipower_pro_battery_current_capacity) += id(pipower_pro_battery_current).state * 1000 / 3600.0f;
-      if (id(pipower_pro_battery_current_capacity) > id(pipower_pro_battery_factory_capacity)) {
-        id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_factory_capacity);
+      if (id(pipower_pro_battery_current_capacity) > $factory_max_capacity) {
+        id(pipower_pro_battery_current_capacity) = $factory_max_capacity;
       }
       if  (id(pipower_pro_battery_current_capacity) > id(pipower_pro_battery_max_capacity)) {
         id(pipower_pro_battery_max_capacity) = id(pipower_pro_battery_current_capacity);

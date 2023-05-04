@@ -12,11 +12,8 @@ logger:
 
 # Enable Home Assistant API
 api:
-  encryption:
-    key: "wuJrEm4L6udD3LDWObzzhUzJMRAQH8GBZQljsX5AQi4="
 
 ota:
-  password: "a2f47d3677ff92ba9ef2a2ba274e68c3"
 
 wifi:
   ssid: !secret wifi_ssid
@@ -30,5 +27,5 @@ wifi:
 captive_portal:
 
 packages:
-  # sunfounder.pipower-pro: github://sunfounder/pipower-pro/pipower-pro-template.yaml@main
-  pipower-pro: !include pipower-pro-template.yaml
+  sunfounder.pipower-pro: github://sunfounder/pipower-pro/pipower-pro-template.yaml@main
+  # pipower-pro: !include pipower-pro-template.yaml
