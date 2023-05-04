@@ -11,9 +11,9 @@ esphome:
   project:
     name: "sunfounder.pipower-pro"
     version: "v1.0.0"
-  includes:
-    # - current-control.h
-    - https://raw.githubusercontent.com/sunfounder/pipower-pro/main/current-control.h
+  # includes:
+  #   # - current-control.h
+  #   - https://raw.githubusercontent.com/sunfounder/pipower-pro/main/current-control.h
   on_boot:
     priority: 800
     then:
@@ -118,15 +118,18 @@ globals:
     initial_value: 'false'
 
 output:
-  - platform: custom
-    type: float
-    lambda: |-
-      auto cc = new CurrentControl();
-      App.register_component(cc);
-      return {cc};
-    outputs:
-      id: pipower_pro_charge_current_control
+  # - platform: custom
+  #   type: float
+  #   lambda: |-
+  #     auto cc = new CurrentControl();
+  #     App.register_component(cc);
+  #     return {cc};
+  #   outputs:
+  #     id: pipower_pro_charge_current_control
 
+  - platform: esp32_dac
+    pin: 17
+    id: pipower_pro_charge_current_control
 
 switch:
   # Battery Output
