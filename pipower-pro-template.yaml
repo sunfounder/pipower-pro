@@ -22,11 +22,12 @@ esphome:
           level: 0.0
       - if:
           condition:
-            lambda: return id(pipower_pro_power_button).state == true;
+            binary_sensor.is_on: pipower_pro_power_button
           then:
             - switch.turn_on: pipower_pro_power_switch
             - switch.turn_on: pipower_pro_external_output
             - switch.turn_on: pipower_pro_battery_output
+      - script.execute: pipower_pro_start_status_led
 
 esp32:
   board: esp32-s2-saola-1
@@ -42,42 +43,52 @@ api:
       variables:
         capacity: int
       then:
-        - lambda: |-
-            id(pipower_pro_battery_factory_capacity_value) = capacity;
+        - globals.set:
+            id: pipower_pro_battery_factory_capacity_value
+            value: !lambda 'return capacity;'
     - service: enable_coulomb_count_beta
       variables:
         enable_coulomb_count_beta: bool
       then:
-        - lambda: |-
-            id(pipower_pro_enable_coulomb_count) = enable_coulomb_count_beta;
+        - globals.set:
+            id: pipower_pro_enable_coulomb_count
+            value: !lambda 'return enable_coulomb_count_beta;'
     - service: reset_capacity
       then:
-        - lambda: |-
-            id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_factory_capacity_value);
+        - globals.set:
+            id: pipower_pro_battery_current_capacity
+            value: !lambda 'return pipower_pro_battery_factory_capacity_value;'
     - service: reset_output_energy
       then:
-        - lambda: |-
-            id(pipower_pro_output_energy).reset();
+        - sensor.integration.reset:  pipower_pro_output_energy
     - service: set_edv2
       variables:
         voltage: float
       then:
-        - lambda: id(pipower_pro_edv2) = voltage;
+        - globals.set:
+            id: pipower_pro_edv2
+            value: !lambda 'return voltage;'
     - service: set_edv1
       variables:
         voltage: float
       then:
-        - lambda: id(pipower_pro_edv1) = voltage;
+        - globals.set:
+            id: pipower_pro_edv1
+            value: !lambda 'return voltage;'
     - service: set_edv0
       variables:
         voltage: float
       then:
-        - lambda: id(pipower_pro_edv0) = voltage;
+        - globals.set:
+            id: pipower_pro_edv0
+            value: !lambda 'return voltage;'
     - service: set_rcv
       variables:
         voltage: float
       then:
-        - lambda: id(pipower_pro_rcv) = voltage;
+        - globals.set:
+            id: pipower_pro_rcv
+            value: !lambda 'return voltage;'
 
 ota:
 
@@ -160,11 +171,17 @@ globals:
     type: bool
     restore_value: yes
     initial_value: 'false'
+  # Status led mode: 0: OFF, 1: ON, 2: Blink 1Hz, 3: Blink 2Hz
+  - id: pipower_pro_status_led_mode
+    type: int
+    restore_value: no
+    initial_value: '2'
   # simulate low power test
   - id: pipower_pro_simulate_low_power
     type: bool
     restore_value: no
     initial_value: 'false'
+
 
 output:
   # - platform: esp32_dac
@@ -211,19 +228,23 @@ switch:
     device_class: SWITCH
     lambda: return id(pipower_pro_power_switch_current_state);
     turn_on_action:
-      - lambda: id(pipower_pro_power_switch_current_state) = true;
       - switch.turn_on: pipower_pro_external_output
       - switch.turn_on: pipower_pro_battery_output
-      - switch.turn_on: pipower_pro_esp32_power
+      - globals.set:
+          id: pipower_pro_power_switch_current_state
+          value: 'true'
     turn_off_action:
-      - lambda: id(pipower_pro_power_switch_current_state) = false;
       - switch.turn_off: pipower_pro_external_output
       - switch.turn_off: pipower_pro_battery_output
-      - if:
-          condition: 
-            binary_sensor.is_off: pipower_pro_always_on
-          then:
-            - switch.turn_off: pipower_pro_esp32_power
+      - globals.set:
+          id: pipower_pro_power_switch_current_state
+          value: 'false'
+  # Sub Device Switch
+  - platform: gpio
+    name: Status LED
+    id: pipower_pro_status_led
+    pin: 
+      number: 35
   # Battery Indicator 25
   - platform: gpio
     name: Battery Indicator 25
@@ -273,9 +294,13 @@ switch:
     id: pipower_pro_simulate_low_power_switch
     lambda: return id(pipower_pro_simulate_low_power);
     turn_on_action:
-      - lambda: id(pipower_pro_simulate_low_power) = true;
+      - globals.set:
+          id: pipower_pro_simulate_low_power
+          value: 'true'
     turn_off_action:
-      - lambda: id(pipower_pro_simulate_low_power) = false;
+      - globals.set:
+          id: pipower_pro_simulate_low_power
+          value: 'false'
 
 
 sensor:
@@ -293,39 +318,7 @@ sensor:
       - lambda: return x * (120.0f + 51.0f) / 51.0f;
     on_value:
       then:
-        - lambda: |-
-            // CEDV Calibration for battery capacity
-            // qPass: 
-            float qPass = id(pipower_pro_battery_max_capacity) - id(pipower_pro_battery_current_capacity);
-            if (x <= id(pipower_pro_edv0)) {
-              if (!id(pipower_pro_edv0_calibrated)) {
-                id(pipower_pro_battery_max_capacity) = qPass;
-                id(pipower_pro_battery_current_capacity) = 0;
-                id(pipower_pro_edv0_calibrated) = true;
-                ESP_LOGI("Battery", "Battery Lower than 0%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
-              }
-            } else if (x <= id(pipower_pro_edv1)) {
-              if (!id(pipower_pro_edv1_calibrated)) {
-                id(pipower_pro_battery_max_capacity) = qPass + id(pipower_pro_battery_max_capacity) * 0.03;
-                id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_max_capacity) - qPass;
-                id(pipower_pro_edv1_calibrated) = true;
-                ESP_LOGI("Battery", "Battery Lower than 3%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
-              }
-            } else if (x <= id(pipower_pro_edv2)) {
-              if (!id(pipower_pro_edv2_calibrated)) {
-                id(pipower_pro_battery_max_capacity) = qPass + id(pipower_pro_battery_max_capacity) * 0.07;
-                id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_max_capacity) - qPass;
-                id(pipower_pro_edv2_calibrated) = true;
-                ESP_LOGI("Battery", "Battery Lower than 7%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
-              }
-            } else if (x > id(pipower_pro_rcv)) {
-              if (id(pipower_pro_edv0_calibrated) || id(pipower_pro_edv1_calibrated) || id(pipower_pro_edv2_calibrated)) {
-                id(pipower_pro_edv0_calibrated) = false;
-                id(pipower_pro_edv1_calibrated) = false;
-                id(pipower_pro_edv2_calibrated) = false;
-                ESP_LOGI("Battery", "Battery Over 8V, reset calibrate");
-              }
-            }
+        - lambda: id(pipower_pro_calibrate_capacity)->execute(x);
   # Battery Current Reference
   - platform: adc
     pin: 7
@@ -401,61 +394,7 @@ sensor:
       return level;
     on_value:
       then:
-        - lambda: |-
-            if (id(pipower_pro_power_switch).state == true || id(pipower_pro_is_charging).state == true) {
-              float level = id(pipower_pro_battery_level).state;
-              if (level > 75) {
-                id(pipower_pro_battery_indicator_25).turn_on();
-                id(pipower_pro_battery_indicator_50).turn_on();
-                id(pipower_pro_battery_indicator_75).turn_on();
-                if (id(pipower_pro_is_charging).state == true) {
-                  id(pipower_pro_battery_indicator_100).toggle();
-                } else {
-                  id(pipower_pro_battery_indicator_100).turn_on();
-                }
-              } else if (level > 50) {
-                id(pipower_pro_battery_indicator_25).turn_on();
-                id(pipower_pro_battery_indicator_50).turn_on();
-                id(pipower_pro_battery_indicator_100).turn_off();
-                if (id(pipower_pro_is_charging).state == true) {
-                  id(pipower_pro_battery_indicator_75).toggle();
-                } else {
-                  id(pipower_pro_battery_indicator_75).turn_on();
-                }
-              } else if (level > 25) {
-                id(pipower_pro_battery_indicator_25).turn_on();
-                id(pipower_pro_battery_indicator_75).turn_off();
-                id(pipower_pro_battery_indicator_100).turn_off();
-                if (id(pipower_pro_is_charging).state == true) {
-                  id(pipower_pro_battery_indicator_50).toggle();
-                } else {
-                  id(pipower_pro_battery_indicator_50).turn_on();
-                }
-              } else if (level > 10) {
-                id(pipower_pro_battery_indicator_50).turn_off();
-                id(pipower_pro_battery_indicator_75).turn_off();
-                id(pipower_pro_battery_indicator_100).turn_off();
-                if (id(pipower_pro_is_charging).state == true) {
-                  id(pipower_pro_battery_indicator_25).toggle();
-                } else {
-                  id(pipower_pro_battery_indicator_25).turn_on();
-                }
-              } else {
-                id(pipower_pro_battery_indicator_50).turn_off();
-                id(pipower_pro_battery_indicator_75).turn_off();
-                id(pipower_pro_battery_indicator_100).turn_off();
-                if (id(pipower_pro_is_charging).state == true) {
-                  id(pipower_pro_battery_indicator_25).toggle();
-                } else {
-                  id(pipower_pro_battery_indicator_25).turn_off();
-                }
-              }
-            } else {
-              id(pipower_pro_battery_indicator_25).turn_off();
-              id(pipower_pro_battery_indicator_50).turn_off();
-              id(pipower_pro_battery_indicator_75).turn_off();
-              id(pipower_pro_battery_indicator_100).turn_off();
-            } 
+        - lambda: id(pipower_pro_show_battery_indicator)->execute(x);
   # Output Voltage
   - platform: adc
     pin: 1
@@ -467,9 +406,7 @@ sensor:
     accuracy_decimals: 2
     filters:
       # 100K : 100K resistor divider
-      - lambda: |-
-          ESP_LOGW("pipower_pro_output_voltage", "raw: %f", x); // test
-          return x * 2.0f;
+      - lambda: return x * 2.0f;
   # Output Current
   - platform: adc
     pin: 4
@@ -514,27 +451,7 @@ sensor:
       - lambda: return x * 2.0f;
     on_value:
       then:
-        - lambda: |-
-            // PID control for battery charging
-            if (!id(pipower_pro_power_switch_current_state)) {
-              id(pipower_pro_charge_current_control).set_level(0);
-              return;
-            }
-            float state = id(pipower_pro_input_voltage).state;
-            float targetVoltage = 4.9f;
-            float kp = 0.1f;
-            float ki = 0.0f;
-            float kd = 0.1f;
-            float error = state - targetVoltage;
-            float offset = kp * error + ki * id(pipower_pro_charge_control_error_integral) + kd * (error - id(pipower_pro_charge_control_last_error));
-            id(pipower_pro_charge_control_error_integral) += error;
-            id(pipower_pro_charge_control_last_error) = error;
-            id(pipower_pro_charge_control_value) -= offset;
-            // Max voltage is 1.5V so max value is 1.5V / 3.3V = 0.4545
-            float maxValue = 0.4545;
-            if (id(pipower_pro_charge_control_value) > maxValue) id(pipower_pro_charge_control_value) = maxValue;
-            if (id(pipower_pro_charge_control_value) < 0.0f) id(pipower_pro_charge_control_value) = 0.0f;
-            id(pipower_pro_charge_current_control).set_level(id(pipower_pro_charge_control_value));
+        - lambda: id(pipower_pro_set_charge_current)->execute(x);
   # Battery factory capacity
   - platform: template
     name: Battery Factory Capacity
@@ -566,10 +483,14 @@ binary_sensor:
             then:
               - switch.turn_on: pipower_pro_power_switch
     on_multi_click:
-    - timing:
-        - ON for at least 3s
-      then:
-        - switch.turn_off: pipower_pro_power_switch
+        - timing:
+            - ON for at least 2s
+          then:
+            - switch.turn_off: pipower_pro_power_switch
+        - timing:
+            - ON for at least 3s
+          then:
+            - switch.turn_off: pipower_pro_esp32_power
   # Battery Low
   - platform: template
     name: Battery Low
@@ -595,14 +516,6 @@ binary_sensor:
     pin: 34
     internal: true
     id: pipower_pro_power_source_state
-  # Always On
-  - platform: gpio
-    name: Always On
-    pin: 
-      number: 21
-      mode: INPUT_PULLUP
-      inverted: true
-    id: pipower_pro_always_on
   # Sub Device Power State
   - platform: gpio
     name: Sub Device Power State
@@ -643,3 +556,171 @@ text_sensor:
       } else {
         return {"Voltage Map"};
       }
+
+script:
+  # CEDV Calibration for battery capacity
+  - id: pipower_pro_calibrate_capacity
+    parameters:
+      voltage: float
+    then:
+      - lambda: |-
+          // qPass, quantity of charge passed: 
+          float qPass = id(pipower_pro_battery_max_capacity) - id(pipower_pro_battery_current_capacity);
+          if (voltage <= id(pipower_pro_edv0)) {
+            if (!id(pipower_pro_edv0_calibrated)) {
+              id(pipower_pro_battery_max_capacity) = qPass;
+              id(pipower_pro_battery_current_capacity) = 0;
+              id(pipower_pro_edv0_calibrated) = true;
+              ESP_LOGI("Battery", "Battery Lower than 0%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
+            }
+          } else if (voltage <= id(pipower_pro_edv1)) {
+            if (!id(pipower_pro_edv1_calibrated)) {
+              id(pipower_pro_battery_max_capacity) = qPass + id(pipower_pro_battery_max_capacity) * 0.03;
+              id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_max_capacity) - qPass;
+              id(pipower_pro_edv1_calibrated) = true;
+              ESP_LOGI("Battery", "Battery Lower than 3%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
+            }
+          } else if (voltage <= id(pipower_pro_edv2)) {
+            if (!id(pipower_pro_edv2_calibrated)) {
+              id(pipower_pro_battery_max_capacity) = qPass + id(pipower_pro_battery_max_capacity) * 0.07;
+              id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_max_capacity) - qPass;
+              id(pipower_pro_edv2_calibrated) = true;
+              ESP_LOGI("Battery", "Battery Lower than 7%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
+            }
+          } else if (voltage > id(pipower_pro_rcv)) {
+            if (id(pipower_pro_edv0_calibrated) || id(pipower_pro_edv1_calibrated) || id(pipower_pro_edv2_calibrated)) {
+              id(pipower_pro_edv0_calibrated) = false;
+              id(pipower_pro_edv1_calibrated) = false;
+              id(pipower_pro_edv2_calibrated) = false;
+              ESP_LOGI("Battery", "Battery Over 8V, reset calibrate");
+            }
+          }
+  # Set Battery Indicator according to battery level
+  - id: pipower_pro_show_battery_indicator
+    parameters:
+      level: float
+    then:
+      - lambda: |-
+          if (id(pipower_pro_power_switch).state == true || id(pipower_pro_input_voltage).state > 4.0f) {
+            if (level > 75) {
+              id(pipower_pro_battery_indicator_25).turn_on();
+              id(pipower_pro_battery_indicator_50).turn_on();
+              id(pipower_pro_battery_indicator_75).turn_on();
+              if (id(pipower_pro_is_charging).state == true) {
+                id(pipower_pro_battery_indicator_100).toggle();
+              } else {
+                id(pipower_pro_battery_indicator_100).turn_on();
+              }
+            } else if (level > 50) {
+              id(pipower_pro_battery_indicator_25).turn_on();
+              id(pipower_pro_battery_indicator_50).turn_on();
+              id(pipower_pro_battery_indicator_100).turn_off();
+              if (id(pipower_pro_is_charging).state == true) {
+                id(pipower_pro_battery_indicator_75).toggle();
+              } else {
+                id(pipower_pro_battery_indicator_75).turn_on();
+              }
+            } else if (level > 25) {
+              id(pipower_pro_battery_indicator_25).turn_on();
+              id(pipower_pro_battery_indicator_75).turn_off();
+              id(pipower_pro_battery_indicator_100).turn_off();
+              if (id(pipower_pro_is_charging).state == true) {
+                id(pipower_pro_battery_indicator_50).toggle();
+              } else {
+                id(pipower_pro_battery_indicator_50).turn_on();
+              }
+            } else if (level > 10) {
+              id(pipower_pro_battery_indicator_50).turn_off();
+              id(pipower_pro_battery_indicator_75).turn_off();
+              id(pipower_pro_battery_indicator_100).turn_off();
+              if (id(pipower_pro_is_charging).state == true) {
+                id(pipower_pro_battery_indicator_25).toggle();
+              } else {
+                id(pipower_pro_battery_indicator_25).turn_on();
+              }
+            } else {
+              id(pipower_pro_battery_indicator_50).turn_off();
+              id(pipower_pro_battery_indicator_75).turn_off();
+              id(pipower_pro_battery_indicator_100).turn_off();
+              if (id(pipower_pro_is_charging).state == true) {
+                id(pipower_pro_battery_indicator_25).toggle();
+              } else {
+                id(pipower_pro_battery_indicator_25).turn_off();
+              }
+            }
+          } else {
+            id(pipower_pro_battery_indicator_25).turn_off();
+            id(pipower_pro_battery_indicator_50).turn_off();
+            id(pipower_pro_battery_indicator_75).turn_off();
+            id(pipower_pro_battery_indicator_100).turn_off();
+          } 
+  # Set Charge Current according to input voltage
+  - id: pipower_pro_set_charge_current
+    parameters:
+      input_voltage: float
+    then:
+      - lambda: |-
+          // If not power on, set charge current to maximum
+          if (!id(pipower_pro_power_switch_current_state)) {
+            id(pipower_pro_charge_current_control).set_level(0);
+            return;
+          }
+          // PID control for battery charging
+          float targetVoltage = 4.9f;
+          float kp = 0.1f;
+          float ki = 0.0f;
+          float kd = 0.1f;
+          float error = input_voltage - targetVoltage;
+          float offset = kp * error + ki * id(pipower_pro_charge_control_error_integral) + kd * (error - id(pipower_pro_charge_control_last_error));
+          id(pipower_pro_charge_control_error_integral) += error;
+          id(pipower_pro_charge_control_last_error) = error;
+          id(pipower_pro_charge_control_value) -= offset;
+          // Max voltage is 1.5V so max value is 1.5V / 3.3V = 0.4545
+          float maxValue = 0.4545;
+          if (id(pipower_pro_charge_control_value) > maxValue) id(pipower_pro_charge_control_value) = maxValue;
+          if (id(pipower_pro_charge_control_value) < 0.0f) id(pipower_pro_charge_control_value) = 0.0f;
+          id(pipower_pro_charge_current_control).set_level(id(pipower_pro_charge_control_value));
+  # Start status LED
+  - id: pipower_pro_start_status_led
+    then:
+      - lambda: |-
+          let count = 0;
+          while(True) {
+            switch(id(pipower_pro_status_led_mode)) {
+              case 0: // Off
+                id(pipower_pro_status_led).turn_off();
+                break;
+              case 1: // ON
+                id(pipower_pro_status_led).turn_on();
+                break;
+              case 2: // Blink 1Hz
+                if (count / 10 % 2 == 0) {
+                  id(pipower_pro_status_led).turn_on();
+                } else {
+                  id(pipower_pro_status_led).turn_off();
+                }
+                break;
+              case 3: // Blink 2Hz
+                if (count / 5 % 2== 0) {
+                  id(pipower_pro_status_led).turn_on();
+                } else {
+                  id(pipower_pro_status_led).turn_off();
+                }
+                break;
+            }
+            count += 1;
+            delay(100);
+            if (count > 20) count = 0;
+          }
+          id(pipower_pro_status_led).turn_on();
+
+interval:
+  - interval: 1s
+    then:
+      if:
+        condition:
+          wifi.connected:
+        then:
+          globals.set:
+            id: pipower_pro_status_led_mode
+            value: 1
