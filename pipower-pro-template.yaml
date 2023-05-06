@@ -1,7 +1,6 @@
 substitutions:
   name: pipower-pro
   friendly_name: PiPower Pro
-  factory_max_capacity: "2000"
 
 esphome:
   name: "${name}"
@@ -9,10 +8,8 @@ esphome:
   comment: Smart UPS module
   # name_add_mac_suffix: true
   project:
-    name: "sunfounder.pipower-pro"
+    name: "SunFounder.PiPower-Pro"
     version: "v1.0.0"
-  includes:
-    - current-control.h
   on_boot:
     priority: 800
     then:
@@ -20,6 +17,9 @@ esphome:
           id: pipower_pro_version
           state: "v1.0.0"
       - switch.turn_on: pipower_pro_esp32_power
+      - output.set_level:
+          id: pipower_pro_charge_current_control
+          level: 0.0
       - if:
           condition:
             lambda: return id(pipower_pro_power_button).state == true;
@@ -37,6 +37,47 @@ logger:
   level: WARN
 
 api:
+  services:
+    - service: set_battery_factory_capacity
+      variables:
+        capacity: int
+      then:
+        - lambda: |-
+            id(pipower_pro_battery_factory_capacity_value) = capacity;
+    - service: enable_coulomb_count_beta
+      variables:
+        enable_coulomb_count_beta: bool
+      then:
+        - lambda: |-
+            id(pipower_pro_enable_coulomb_count) = enable_coulomb_count_beta;
+    - service: reset_capacity
+      then:
+        - lambda: |-
+            id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_factory_capacity_value);
+    - service: reset_output_energy
+      then:
+        - lambda: |-
+            id(pipower_pro_output_energy).reset();
+    - service: set_edv2
+      variables:
+        voltage: float
+      then:
+        - lambda: id(pipower_pro_edv2) = voltage;
+    - service: set_edv1
+      variables:
+        voltage: float
+      then:
+        - lambda: id(pipower_pro_edv1) = voltage;
+    - service: set_edv0
+      variables:
+        voltage: float
+      then:
+        - lambda: id(pipower_pro_edv0) = voltage;
+    - service: set_rcv
+      variables:
+        voltage: float
+      then:
+        - lambda: id(pipower_pro_rcv) = voltage;
 
 ota:
 
@@ -46,11 +87,16 @@ dashboard_import:
 
 wifi:
   ap:
+    ssid: "Pipower-Pro Fallback Hotspot"
     password: "12345678"
 
 captive_portal:
 
 globals:
+  - id: pipower_pro_battery_factory_capacity_value
+    type: float
+    restore_value: yes
+    initial_value: '2000'
   - id: pipower_pro_battery_max_capacity
     type: float
     restore_value: yes
@@ -65,35 +111,35 @@ globals:
     initial_value: 'true'
   - id: pipower_pro_charge_control_value
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '0'
   - id: pipower_pro_charge_control_last_error
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '0'
   - id: pipower_pro_charge_control_error_integral
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '0'
   # End of discharge voltage 2: 7% capacity
   - id: pipower_pro_edv2
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '6.8'
   # End of discharge voltage 1: 3% capacity
   - id: pipower_pro_edv1
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '6.5'
   # End of discharge voltage 0: 0% capacity
   - id: pipower_pro_edv0
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '6.2'
   # reset calibrate voltage:
   - id: pipower_pro_rcv
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '8'
   # edv2 is calibrated, lock calibrate incase of keep calibrating
   - id: pipower_pro_edv2_calibrated
@@ -110,6 +156,10 @@ globals:
     type: float
     restore_value: yes
     initial_value: 'false'
+  - id: pipower_pro_enable_coulomb_count
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
   # simulate low power test
   - id: pipower_pro_simulate_low_power
     type: bool
@@ -117,18 +167,18 @@ globals:
     initial_value: 'false'
 
 output:
-  - platform: custom
-    type: float
-    lambda: |-
-      auto cc = new CurrentControl();
-      App.register_component(cc);
-      return {cc};
-    outputs:
-      id: pipower_pro_charge_current_control
-
   # - platform: esp32_dac
   #   pin: 17
   #   id: pipower_pro_charge_current_control
+
+  - platform: template
+    type: float
+    id: pipower_pro_charge_current_control
+    write_action:
+      - lambda: |-
+          int value = state * 255;
+          dacWrite(17, value);
+
 
 switch:
   # Battery Output
@@ -238,10 +288,7 @@ sensor:
     update_interval: 1s
     accuracy_decimals: 2
     unit_of_measurement: V
-    # raw: true
     filters:
-      # 2.669 / 8191
-      # - multiply: 0.00032584544011720
       # 120K : 51K resistor divider
       - lambda: return x * (120.0f + 51.0f) / 51.0f;
     on_value:
@@ -255,30 +302,39 @@ sensor:
                 id(pipower_pro_battery_max_capacity) = qPass;
                 id(pipower_pro_battery_current_capacity) = 0;
                 id(pipower_pro_edv0_calibrated) = true;
-                ESP_LOGW("Battery", "Battery Lower than 0%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
+                ESP_LOGI("Battery", "Battery Lower than 0%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
               }
             } else if (x <= id(pipower_pro_edv1)) {
               if (!id(pipower_pro_edv1_calibrated)) {
                 id(pipower_pro_battery_max_capacity) = qPass + id(pipower_pro_battery_max_capacity) * 0.03;
                 id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_max_capacity) - qPass;
                 id(pipower_pro_edv1_calibrated) = true;
-                ESP_LOGW("Battery", "Battery Lower than 3%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
+                ESP_LOGI("Battery", "Battery Lower than 3%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
               }
             } else if (x <= id(pipower_pro_edv2)) {
               if (!id(pipower_pro_edv2_calibrated)) {
                 id(pipower_pro_battery_max_capacity) = qPass + id(pipower_pro_battery_max_capacity) * 0.07;
                 id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_max_capacity) - qPass;
                 id(pipower_pro_edv2_calibrated) = true;
-                ESP_LOGW("Battery", "Battery Lower than 7%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
+                ESP_LOGI("Battery", "Battery Lower than 7%, calibrate, %f/%f", id(pipower_pro_battery_current_capacity), id(pipower_pro_battery_max_capacity));
               }
             } else if (x > id(pipower_pro_rcv)) {
               if (id(pipower_pro_edv0_calibrated) || id(pipower_pro_edv1_calibrated) || id(pipower_pro_edv2_calibrated)) {
                 id(pipower_pro_edv0_calibrated) = false;
                 id(pipower_pro_edv1_calibrated) = false;
                 id(pipower_pro_edv2_calibrated) = false;
-                ESP_LOGW("Battery", "Battery Over 8V, reset calibrate");
+                ESP_LOGI("Battery", "Battery Over 8V, reset calibrate");
               }
             }
+  # Battery Current Reference
+  - platform: adc
+    pin: 7
+    name: Battery Current Reference
+    id: pipower_pro_battery_current_reference
+    attenuation: 11db
+    update_interval: 1s
+    accuracy_decimals: 2
+    unit_of_measurement: V
   # Battery Current
   - platform: adc
     pin: 5
@@ -288,14 +344,11 @@ sensor:
     update_interval: 1s
     accuracy_decimals: 2
     unit_of_measurement: A
-    # raw: true
     filters:
-      # 2.669 / 8191
-      # - multiply: 0.00032584544011720
       # Differencial amplified 100 times, devided by 0.005 ohm resistor
-      # with 1.4v reference voltage, makes it bidirectional.
+      # with reference voltage, makes it bidirectional.
       - lambda: |-
-          return -(x - 1.43f) / 100.0f / 0.005f;
+          return -(x - id(pipower_pro_battery_current_reference).state) / 100.0f / 0.005f;
   # Battery Power
   - platform: template
     name: Battery Power
@@ -314,10 +367,10 @@ sensor:
     device_class: energy
     accuracy_decimals: 0
     lambda: |-
-      if (!id(pipower_pro_battery_current).has_state()) return false;
+      if (!id(pipower_pro_battery_current).has_state()) return 0.0f;
       id(pipower_pro_battery_current_capacity) += id(pipower_pro_battery_current).state * 1000 / 3600.0f;
-      if (id(pipower_pro_battery_current_capacity) > $factory_max_capacity) {
-        id(pipower_pro_battery_current_capacity) = $factory_max_capacity;
+      if (id(pipower_pro_battery_current_capacity) > id(pipower_pro_battery_factory_capacity_value)) {
+        id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_factory_capacity_value);
       }
       if  (id(pipower_pro_battery_current_capacity) > id(pipower_pro_battery_max_capacity)) {
         id(pipower_pro_battery_max_capacity) = id(pipower_pro_battery_current_capacity);
@@ -335,15 +388,17 @@ sensor:
     accuracy_decimals: 0
     device_class: battery
     lambda: |-
+      int level = 0;
+      if (id(pipower_pro_enable_coulomb_count) == false) {
+        level = (id(pipower_pro_battery_voltage).state - id(pipower_pro_edv0)) / (8.4 - id(pipower_pro_edv0)) * 100.0f;
+      } else {
+        level = id(pipower_pro_battery_capacity).state / id(pipower_pro_battery_max_capacity) * 100.0f;
+      }
       // test
       if (id(pipower_pro_simulate_low_power)) {
-        return 10.0f;
+        level = 10;
       }
-      if (id(pipower_pro_battery_capacity_algorithm).active_index() == 0) {
-        return (id(pipower_pro_battery_voltage).state - id(pipower_pro_edv0)) / (8.4 - id(pipower_pro_edv0)) * 100.0f;
-      } else {
-        return id(pipower_pro_battery_capacity).state / id(pipower_pro_battery_max_capacity) * 100.0f;
-      }
+      return level;
     on_value:
       then:
         - lambda: |-
@@ -410,12 +465,11 @@ sensor:
     update_interval: 1s
     unit_of_measurement: V
     accuracy_decimals: 2
-    # raw: true
     filters:
-      # 2.669 / 8191
-      # - multiply: 0.00032584544011720
       # 100K : 100K resistor divider
-      - lambda: return x * 2.0f;
+      - lambda: |-
+          ESP_LOGW("pipower_pro_output_voltage", "raw: %f", x); // test
+          return x * 2.0f;
   # Output Current
   - platform: adc
     pin: 4
@@ -425,10 +479,7 @@ sensor:
     update_interval: 1s
     accuracy_decimals: 2
     unit_of_measurement: A
-    # raw: true
     filters:
-      # 2.669 / 8191
-      # - multiply: 0.00032584544011720
       # Differencial amplified 100 times, devided by 0.005 ohm resistor.
       - lambda: return x / 100.0f / 0.005f;
   # Output Power
@@ -458,20 +509,15 @@ sensor:
     update_interval: 1s
     accuracy_decimals: 1
     unit_of_measurement: V
-    # raw: true
     filters:
-      # 2.669 / 8191
-      # - multiply: 0.00032584544011720
       # 100K : 100K resistor divider
       - lambda: return x * 2.0f;
     on_value:
       then:
         - lambda: |-
             // PID control for battery charging
-            // if not charging, do nothing
-            // if (!id(pipower_pro_is_charging).state) return;
             if (!id(pipower_pro_power_switch_current_state)) {
-              id(pipower_pro_charge_current_control).set_level(1);
+              id(pipower_pro_charge_current_control).set_level(0);
               return;
             }
             float state = id(pipower_pro_input_voltage).state;
@@ -479,15 +525,23 @@ sensor:
             float kp = 0.1f;
             float ki = 0.0f;
             float kd = 0.1f;
-            float error = targetVoltage - state;
+            float error = state - targetVoltage;
             float offset = kp * error + ki * id(pipower_pro_charge_control_error_integral) + kd * (error - id(pipower_pro_charge_control_last_error));
             id(pipower_pro_charge_control_error_integral) += error;
             id(pipower_pro_charge_control_last_error) = error;
             id(pipower_pro_charge_control_value) -= offset;
-            if (id(pipower_pro_charge_control_value) > 1.0f) id(pipower_pro_charge_control_value) = 1.0f;
+            // Max voltage is 1.5V so max value is 1.5V / 3.3V = 0.4545
+            float maxValue = 0.4545;
+            if (id(pipower_pro_charge_control_value) > maxValue) id(pipower_pro_charge_control_value) = maxValue;
             if (id(pipower_pro_charge_control_value) < 0.0f) id(pipower_pro_charge_control_value) = 0.0f;
-            ESP_LOGD("main", "Input voltage: %f, target: %f, error: %f, offset: %f, charge control: %f", state, targetVoltage, error, offset, id(pipower_pro_charge_control_value));
             id(pipower_pro_charge_current_control).set_level(id(pipower_pro_charge_control_value));
+  # Battery factory capacity
+  - platform: template
+    name: Battery Factory Capacity
+    id: pipower_pro_battery_factory_capacity
+    unit_of_measurement: mAh
+    accuracy_decimals: 0
+    lambda: return id(pipower_pro_battery_factory_capacity_value);
 
 binary_sensor:
   # Is Charging
@@ -545,7 +599,7 @@ binary_sensor:
   - platform: gpio
     name: Always On
     pin: 
-      number: 7
+      number: 21
       mode: INPUT_PULLUP
       inverted: true
     id: pipower_pro_always_on
@@ -555,26 +609,12 @@ binary_sensor:
     pin: 42
     id: pipower_pro_sub_device_power_state
 
+
 button:
-  # Capacity Reset
-  - platform: template
-    name: Capacity Reset
-    icon: mdi:battery-sync
-    on_press:
-      then:
-        - lambda: |-
-            id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_max_capacity);
-  # Output Energy Reset
-  - platform: template
-    name: Output Energy Reset
-    icon: mdi:sync
-    on_press:
-      then:
-        - lambda: |-
-            id(pipower_pro_output_energy).reset();
   # Factory Reset
   - platform: factory_reset
     name: Factory Reset
+
 
 text_sensor:
   # Version
@@ -587,7 +627,6 @@ text_sensor:
     update_interval: 1s
     icon: mdi:power-plug-battery-outline
     lambda: |-
-      // 0: OFF, 1: External, -1: Battery
       if (id(pipower_pro_power_switch).state == false) {
         return {"OFF"};
       } else if (id(pipower_pro_power_source_state).state) {
@@ -595,15 +634,12 @@ text_sensor:
       } else {
         return {"Battery"};
       }
-
-select:
-  # Battery Capacity Algorithm
   - platform: template
     name: "Battery Capacity Algorithm"
     id: pipower_pro_battery_capacity_algorithm
-    optimistic: true
-    restore_value: true
-    options:
-      - Voltage Map
-      - Coulomb Count (Beta)
-    initial_option: Voltage Map
+    lambda: |-
+      if (id(pipower_pro_enable_coulomb_count) == true) {
+        return {"Coulomb Count (Beta)"};
+      } else {
+        return {"Voltage Map"};
+      }
