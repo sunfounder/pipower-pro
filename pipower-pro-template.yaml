@@ -80,10 +80,12 @@ ota:
     then:
       - lambda: |-
           ESP_LOGI("OTA", "OTA update started");
+          id(pipower_pro_status_led_state) = 3;
   on_progress:
     then:
       - lambda: |-
           ESP_LOGI("OTA", "OTA progress, %d%%", x);
+          id(pipower_pro_show_battery_indicator)->execute(x);
 
 dashboard_import:
   package_import_url: github://sunfounder/pipower-pro/pipower-pro-template.yaml@main
@@ -165,11 +167,16 @@ globals:
     type: bool
     restore_value: yes
     initial_value: 'false'
-  # Status LED state: 0: off, 1: on, 2: blink
+  # Status LED state: 0: off, 1: on, 2: blink slow, 3: blink fast
   - id: pipower_pro_status_led_state
     type: int
     restore_value: no
     initial_value: '2'
+  # Status LED count for different blink speed
+  - id: pipower_pro_status_led_count
+    type: int
+    restore_value: no
+    initial_value: '0'
   # Wi-Fi is connected
   - id: pipower_pro_wifi_connected
     type: bool
@@ -694,7 +701,7 @@ script:
 
 interval:
   # LED Control
-  - interval: 500ms
+  - interval: 100ms
     then:
       - lambda: |-
           switch(id(pipower_pro_status_led_state)) {
@@ -704,10 +711,23 @@ interval:
             case 1:
               id(pipower_pro_status_led).turn_on();
               break;
-            case 2:
-              id(pipower_pro_status_led).toggle();
+            case 2: // blink slow
+              if (id(pipower_pro_status_led_count) / 10 % 2 == 0) {
+                id(pipower_pro_status_led).turn_on();
+              } else {
+                id(pipower_pro_status_led).turn_off();
+              }
+              break;
+            case 3: // blink fast
+              if (id(pipower_pro_status_led_count) / 5 % 2 == 0) {
+                id(pipower_pro_status_led).turn_on();
+              } else {
+                id(pipower_pro_status_led).turn_off();
+              }
               break;
           }
+          id(pipower_pro_status_led_count) += 1;
+          id(pipower_pro_status_led_count) = id(pipower_pro_status_led_count) % 20;
   # Wi-Fi connect sync to global
   - interval: 1s
     then:
