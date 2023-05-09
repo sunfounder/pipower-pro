@@ -27,7 +27,6 @@ esphome:
             - switch.turn_on: pipower_pro_power_switch
             - switch.turn_on: pipower_pro_external_output
             - switch.turn_on: pipower_pro_battery_output
-      - script.execute: pipower_pro_start_status_led
 
 esp32:
   board: esp32-s2-saola-1
@@ -35,7 +34,7 @@ esp32:
     type: arduino
 
 logger:
-  level: WARN
+  # level: WARN
 
 api:
   services:
@@ -43,21 +42,15 @@ api:
       variables:
         capacity: int
       then:
-        - globals.set:
-            id: pipower_pro_battery_factory_capacity_value
-            value: !lambda 'return capacity;'
+        - lambda: id(pipower_pro_battery_factory_capacity_value) = capacity;
     - service: enable_coulomb_count_beta
       variables:
         enable_coulomb_count_beta: bool
       then:
-        - globals.set:
-            id: pipower_pro_enable_coulomb_count
-            value: !lambda 'return enable_coulomb_count_beta;'
+        - lambda: id(pipower_pro_enable_coulomb_count) = enable_coulomb_count_beta;
     - service: reset_capacity
       then:
-        - globals.set:
-            id: pipower_pro_battery_current_capacity
-            value: !lambda 'return pipower_pro_battery_factory_capacity_value;'
+        - lambda: id(pipower_pro_battery_current_capacity) = id(pipower_pro_battery_factory_capacity_value);
     - service: reset_output_energy
       then:
         - sensor.integration.reset:  pipower_pro_output_energy
@@ -65,32 +58,32 @@ api:
       variables:
         voltage: float
       then:
-        - globals.set:
-            id: pipower_pro_edv2
-            value: !lambda 'return voltage;'
+        - lambda: id(pipower_pro_edv2) = voltage;
     - service: set_edv1
       variables:
         voltage: float
       then:
-        - globals.set:
-            id: pipower_pro_edv1
-            value: !lambda 'return voltage;'
+        - lambda: id(pipower_pro_edv1) = voltage;
     - service: set_edv0
       variables:
         voltage: float
       then:
-        - globals.set:
-            id: pipower_pro_edv0
-            value: !lambda 'return voltage;'
+        - lambda: id(pipower_pro_edv0) = voltage;
     - service: set_rcv
       variables:
         voltage: float
       then:
-        - globals.set:
-            id: pipower_pro_rcv
-            value: !lambda 'return voltage;'
+        - lambda: id(pipower_pro_rcv) = voltage;
 
 ota:
+  on_begin:
+    then:
+      - lambda: |-
+          ESP_LOGI("OTA", "OTA update started");
+  on_progress:
+    then:
+      - lambda: |-
+          ESP_LOGI("OTA", "OTA progress, %d%%", x);
 
 dashboard_import:
   package_import_url: github://sunfounder/pipower-pro/pipower-pro-template.yaml@main
@@ -167,15 +160,26 @@ globals:
     type: float
     restore_value: yes
     initial_value: 'false'
+  # Enable coulomb count beta or not
   - id: pipower_pro_enable_coulomb_count
     type: bool
     restore_value: yes
     initial_value: 'false'
-  # Status led mode: 0: OFF, 1: ON, 2: Blink 1Hz, 3: Blink 2Hz
-  - id: pipower_pro_status_led_mode
+  # Status LED state: 0: off, 1: on, 2: blink
+  - id: pipower_pro_status_led_state
     type: int
     restore_value: no
     initial_value: '2'
+  # Wi-Fi is connected
+  - id: pipower_pro_wifi_connected
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  # Last Wi-Fi is connected, for Wi-Fi connected state change
+  - id: pipower_pro_last_wifi_connected
+    type: bool
+    restore_value: no
+    initial_value: 'false'
   # simulate low power test
   - id: pipower_pro_simulate_low_power
     type: bool
@@ -239,7 +243,7 @@ switch:
       - globals.set:
           id: pipower_pro_power_switch_current_state
           value: 'false'
-  # Sub Device Switch
+  # Status LED
   - platform: gpio
     name: Status LED
     id: pipower_pro_status_led
@@ -490,8 +494,14 @@ binary_sensor:
         - timing:
             - ON for at least 3s
           then:
-            - switch.turn_off: pipower_pro_esp32_power
-  # Battery Low
+            - if:
+                condition:
+                  binary_sensor.is_off: pipower_pro_external_power
+                then:
+                  - switch.turn_off: pipower_pro_esp32_power
+                  - globals.set:
+                      id: pipower_pro_status_led_state
+                      value: "0"
   - platform: template
     name: Battery Low
     device_class: BATTERY
@@ -504,6 +514,7 @@ binary_sensor:
   # External Power
   - platform: template
     name: External Power
+    id: pipower_pro_external_power
     device_class: PLUG
     lambda: |-
       if (id(pipower_pro_input_voltage).state > 4.0) {
@@ -680,47 +691,46 @@ script:
           if (id(pipower_pro_charge_control_value) > maxValue) id(pipower_pro_charge_control_value) = maxValue;
           if (id(pipower_pro_charge_control_value) < 0.0f) id(pipower_pro_charge_control_value) = 0.0f;
           id(pipower_pro_charge_current_control).set_level(id(pipower_pro_charge_control_value));
-  # Start status LED
-  - id: pipower_pro_start_status_led
-    then:
-      - lambda: |-
-          let count = 0;
-          while(True) {
-            switch(id(pipower_pro_status_led_mode)) {
-              case 0: // Off
-                id(pipower_pro_status_led).turn_off();
-                break;
-              case 1: // ON
-                id(pipower_pro_status_led).turn_on();
-                break;
-              case 2: // Blink 1Hz
-                if (count / 10 % 2 == 0) {
-                  id(pipower_pro_status_led).turn_on();
-                } else {
-                  id(pipower_pro_status_led).turn_off();
-                }
-                break;
-              case 3: // Blink 2Hz
-                if (count / 5 % 2== 0) {
-                  id(pipower_pro_status_led).turn_on();
-                } else {
-                  id(pipower_pro_status_led).turn_off();
-                }
-                break;
-            }
-            count += 1;
-            delay(100);
-            if (count > 20) count = 0;
-          }
-          id(pipower_pro_status_led).turn_on();
 
 interval:
+  # LED Control
+  - interval: 500ms
+    then:
+      - lambda: |-
+          switch(id(pipower_pro_status_led_state)) {
+            case 0:
+              id(pipower_pro_status_led).turn_off();
+              break;
+            case 1:
+              id(pipower_pro_status_led).turn_on();
+              break;
+            case 2:
+              id(pipower_pro_status_led).toggle();
+              break;
+          }
+  # Wi-Fi connect sync to global
   - interval: 1s
     then:
       if:
         condition:
           wifi.connected:
         then:
-          globals.set:
-            id: pipower_pro_status_led_mode
-            value: 1
+          - globals.set:
+              id: pipower_pro_wifi_connected
+              value: "true"
+        else:
+          - globals.set:
+              id: pipower_pro_wifi_connected
+              value: "false"
+  # Change LED state according to Wi-Fi connection
+  - interval: 1s
+    then:
+      - lambda: |-
+          if (id(pipower_pro_wifi_connected) != id(pipower_pro_last_wifi_connected)) {
+            if (id(pipower_pro_wifi_connected) == true) {
+              id(pipower_pro_status_led_state) = 1;
+            } else {
+              id(pipower_pro_status_led_state) = 2;
+            }
+            id(pipower_pro_last_wifi_connected) = id(pipower_pro_wifi_connected);
+          }
