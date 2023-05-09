@@ -336,6 +336,7 @@ sensor:
     name: Battery Current Reference
     id: pipower_pro_battery_current_reference
     attenuation: 11db
+    internal: true
     update_interval: 1s
     accuracy_decimals: 2
     unit_of_measurement: V
