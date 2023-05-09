@@ -74,6 +74,11 @@ api:
         voltage: float
       then:
         - lambda: id(pipower_pro_rcv) = voltage;
+    - service: simulate_low_power
+      variables:
+        enable: bool
+      then:
+        - lambda: id(pipower_pro_simulate_low_power) = enable;
 
 ota:
   on_begin:
@@ -253,6 +258,7 @@ switch:
   # Status LED
   - platform: gpio
     name: Status LED
+    internal: true
     id: pipower_pro_status_led
     pin: 
       number: 35
@@ -299,19 +305,6 @@ switch:
     restore_mode: ALWAYS_ON
     pin: 
       number: 41
-  # test
-  - platform: template
-    name: Simulate Low Power
-    id: pipower_pro_simulate_low_power_switch
-    lambda: return id(pipower_pro_simulate_low_power);
-    turn_on_action:
-      - globals.set:
-          id: pipower_pro_simulate_low_power
-          value: 'true'
-    turn_off_action:
-      - globals.set:
-          id: pipower_pro_simulate_low_power
-          value: 'false'
 
 
 sensor:
@@ -399,7 +392,7 @@ sensor:
       } else {
         level = id(pipower_pro_battery_capacity).state / id(pipower_pro_battery_max_capacity) * 100.0f;
       }
-      // test
+      // test: simulate a low power situation
       if (id(pipower_pro_simulate_low_power)) {
         level = 10;
       }
@@ -485,6 +478,7 @@ binary_sensor:
       number: 16
       inverted: true
     name: Power Button
+    internal: true
     id: pipower_pro_power_button
     publish_initial_state: true
     on_state:
