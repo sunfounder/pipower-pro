@@ -16,7 +16,6 @@ esphome:
       - text_sensor.template.publish:
           id: pipower_pro_version
           state: "v1.0.0"
-      - switch.turn_on: pipower_pro_esp32_power
       - output.set_level:
           id: pipower_pro_charge_current_control
           level: 0.0
@@ -27,6 +26,7 @@ esphome:
             - switch.turn_on: pipower_pro_power_switch
             - switch.turn_on: pipower_pro_external_output
             - switch.turn_on: pipower_pro_battery_output
+            - switch.turn_on: pipower_pro_esp32_power
 
 esp32:
   board: esp32-s2-saola-1
@@ -119,7 +119,7 @@ globals:
   - id: pipower_pro_power_switch_current_state
     type: bool
     restore_value: no
-    initial_value: 'true'
+    initial_value: 'false'
   - id: pipower_pro_charge_control_value
     type: float
     restore_value: yes
@@ -488,6 +488,7 @@ binary_sensor:
               binary_sensor.is_on: pipower_pro_power_button
             then:
               - switch.turn_on: pipower_pro_power_switch
+              - switch.turn_on: pipower_pro_esp32_power
     on_multi_click:
         - timing:
             - ON for at least 2s
@@ -496,14 +497,10 @@ binary_sensor:
         - timing:
             - ON for at least 3s
           then:
-            - if:
-                condition:
-                  binary_sensor.is_off: pipower_pro_external_power
-                then:
-                  - switch.turn_off: pipower_pro_esp32_power
-                  - globals.set:
-                      id: pipower_pro_status_led_state
-                      value: "0"
+            - switch.turn_off: pipower_pro_esp32_power
+            - globals.set:
+                id: pipower_pro_status_led_state
+                value: "0"
   - platform: template
     name: Battery Low
     device_class: BATTERY
