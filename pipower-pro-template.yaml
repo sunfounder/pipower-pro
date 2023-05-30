@@ -27,6 +27,9 @@ esphome:
             - switch.turn_on: pipower_pro_external_output
             - switch.turn_on: pipower_pro_battery_output
             - switch.turn_on: pipower_pro_esp32_power
+            - globals.set:
+                id: pipower_pro_status_led_state
+                value: '2'
 
 esp32:
   board: esp32-s2-saola-1
@@ -176,7 +179,7 @@ globals:
   - id: pipower_pro_status_led_state
     type: int
     restore_value: no
-    initial_value: '2'
+    initial_value: '0'
   # Status LED count for different blink speed
   - id: pipower_pro_status_led_count
     type: int
@@ -232,7 +235,7 @@ switch:
   - platform: gpio
     name: ESP32 Power
     id: pipower_pro_esp32_power
-    restore_mode : ALWAYS_ON
+    restore_mode : no
     pin: 
       number: 6
       inverted: false
