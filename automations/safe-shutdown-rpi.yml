@@ -1,0 +1,28 @@
+alias: Safe shutdown RPi
+description: Turn off Raspberry Pi if no external power plug in and battery low
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.pipower_pro_external_power
+    from: "on"
+    to: "off"
+  - platform: numeric_state
+    entity_id: sensor.pipower_pro_a03846_battery_level
+    below: 25
+condition:
+  - condition: and
+    conditions:
+      - condition: state
+        entity_id: binary_sensor.pipower_pro_a03846_external_power
+        state: "off"
+  - condition: and
+    conditions:
+      - condition: state
+        entity_id: switch.pipower_pro_sub_device_power
+        state: "on"
+action:
+  - type: turn_off
+    device_id: a0ee4e356c85c4f69f765ed72baad129
+    entity_id: switch.pipower_pro_sub_device_power
+    domain: switch
+mode: single
