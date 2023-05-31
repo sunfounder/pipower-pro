@@ -236,11 +236,11 @@ switch:
     pin: 
       number: 6
       inverted: false
-    turn_on_action:
+    on_turn_on:
       - globals.set:
           id: pipower_pro_status_led_state
           value: '2'
-    turn_off_action:
+    on_turn_off:
       - globals.set:
           id: pipower_pro_status_led_state
           value: '0'
