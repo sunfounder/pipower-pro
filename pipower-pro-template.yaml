@@ -235,7 +235,7 @@ switch:
   - platform: gpio
     name: ESP32 Power
     id: pipower_pro_esp32_power
-    restore_mode : "no"
+    restore_mode : "ALWAYS_OFF"
     pin: 
       number: 6
       inverted: false
