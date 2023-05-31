@@ -27,9 +27,6 @@ esphome:
             - switch.turn_on: pipower_pro_external_output
             - switch.turn_on: pipower_pro_battery_output
             - switch.turn_on: pipower_pro_esp32_power
-            - globals.set:
-                id: pipower_pro_status_led_state
-                value: '2'
 
 esp32:
   board: esp32-s2-saola-1
@@ -239,6 +236,14 @@ switch:
     pin: 
       number: 6
       inverted: false
+    turn_on_action:
+      - globals.set:
+          id: pipower_pro_status_led_state
+          value: '2'
+    turn_off_action:
+      - globals.set:
+          id: pipower_pro_status_led_state
+          value: '0'
   # Power Switch
   - platform: template
     name: Power Switch
@@ -501,9 +506,6 @@ binary_sensor:
             - ON for at least 3s
           then:
             - switch.turn_off: pipower_pro_esp32_power
-            - globals.set:
-                id: pipower_pro_status_led_state
-                value: "0"
   - platform: template
     name: Battery Low
     device_class: BATTERY
