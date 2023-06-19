@@ -11,7 +11,7 @@ esphome:
     name: "SunFounder.PiPower-Pro"
     version: "v1.0.0"
   on_boot:
-    priority: 800
+    priority: -100
     then:
       - text_sensor.template.publish:
           id: pipower_pro_version
@@ -23,10 +23,10 @@ esphome:
           condition:
             binary_sensor.is_on: pipower_pro_power_button
           then:
+            - switch.turn_on: pipower_pro_esp32_power
             - switch.turn_on: pipower_pro_power_switch
             - switch.turn_on: pipower_pro_external_output
             - switch.turn_on: pipower_pro_battery_output
-            - switch.turn_on: pipower_pro_esp32_power
 
 esp32:
   board: esp32-s2-saola-1
@@ -616,7 +616,7 @@ script:
       level: float
     then:
       - lambda: |-
-          if (id(pipower_pro_power_switch).state == true || id(pipower_pro_input_voltage).state > 4.0f) {
+          if (id(pipower_pro_power_switch).state == true || id(pipower_pro_input_voltage).state > 3.5f) {
             if (level > 75) {
               id(pipower_pro_battery_indicator_25).turn_on();
               id(pipower_pro_battery_indicator_50).turn_on();
@@ -697,7 +697,7 @@ script:
           id(pipower_pro_charge_current_control).set_level(id(pipower_pro_charge_control_value));
 
 interval:
-  # LED Control
+  # Status LED Control
   - interval: 100ms
     then:
       - lambda: |-
@@ -743,7 +743,7 @@ interval:
   - interval: 1s
     then:
       - lambda: |-
-          if (id(pipower_pro_wifi_connected) != id(pipower_pro_last_wifi_connected)) {
+          if (id(pipower_pro_wifi_connected) != id(pipower_pro_last_wifi_connected) && id(pipower_pro_power_switch_current_state) == true) {
             if (id(pipower_pro_wifi_connected) == true) {
               id(pipower_pro_status_led_state) = 1;
             } else {
