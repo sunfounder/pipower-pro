@@ -329,7 +329,7 @@ sensor:
       # 120K : 51K resistor divider
       - lambda: |-
           ESP_LOGW("Battery Voltage", "voltage: %f", x);
-          return voltagex * (120.0f + 51.0f) / 51.0f;
+          return x * (120.0f + 51.0f) / 51.0f;
     on_value:
       then:
         - lambda: id(pipower_pro_calibrate_capacity)->execute(x);
