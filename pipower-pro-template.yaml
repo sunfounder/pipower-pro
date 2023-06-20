@@ -327,7 +327,7 @@ sensor:
     unit_of_measurement: V
     filters:
       # 120K : 51K resistor divider
-      - lambda: -|
+      - lambda: |-
           ESP_LOGW("Battery Voltage", "voltage: %f", x);
           return voltagex * (120.0f + 51.0f) / 51.0f;
     on_value:
