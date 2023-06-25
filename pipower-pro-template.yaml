@@ -13,6 +13,7 @@ esphome:
   on_boot:
     priority: -100
     then:
+      - logger.log: "PiPower-Pro booting..."
       - text_sensor.template.publish:
           id: pipower_pro_version
           state: "v1.0.0"
@@ -23,10 +24,13 @@ esphome:
           condition:
             binary_sensor.is_on: pipower_pro_power_button
           then:
-            - switch.turn_on: pipower_pro_esp32_power
-            - switch.turn_on: pipower_pro_power_switch
-            - switch.turn_on: pipower_pro_external_output
-            - switch.turn_on: pipower_pro_battery_output
+            - select.set:
+                id: pipower_pro_boot_mode
+                option: "FULL"
+          else:
+            - select.set:
+                id: pipower_pro_boot_mode
+                option: "CHARGE_ONLY"
 
 esp32:
   board: esp32-s2-saola-1
@@ -116,7 +120,7 @@ globals:
     type: float
     restore_value: yes
     initial_value: '2000'
-  - id: pipower_pro_power_switch_current_state
+  - id: pipower_pro_output_switch_state
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -198,6 +202,46 @@ globals:
     restore_value: no
     initial_value: 'false'
 
+select:
+  - platform: template
+    name: "Boot Mode"
+    id: pipower_pro_boot_mode
+    internal: true
+    optimistic: true
+    options:
+      - "INITIALIZING"
+      - "OFF"
+      - "CHARGE_ONLY"
+      - "IDLE"
+      - "FULL"
+      - "OTA"
+    initial_option: INITIALIZING
+    on_value:
+      then:
+        - lambda: |-
+            switch(i) {
+              case 0:
+                break;
+              case 1: // OFF
+                id(pipower_pro_output_switch).turn_off();
+                id(pipower_pro_esp32_power).turn_off();
+                break;
+                break;
+              case 2: // CHARGE_ONLY
+                id(pipower_pro_output_switch).turn_off();
+                id(pipower_pro_esp32_power).turn_off();
+                break;
+              case 3: // IDLE
+                id(pipower_pro_output_switch).turn_off();
+                id(pipower_pro_esp32_power).turn_on();
+                break;
+              case 4: // Full
+                id(pipower_pro_esp32_power).turn_on();
+                id(pipower_pro_output_switch).turn_on();
+                break;
+              case 5:
+                break;
+            }
 
 output:
   # - platform: esp32_dac
@@ -237,31 +281,32 @@ switch:
       number: 6
       inverted: false
     on_turn_on:
-      - globals.set:
-          id: pipower_pro_status_led_state
-          value: '2'
+      - lambda: |-
+          if (id(pipower_pro_status_led_state) == 0) {
+            id(pipower_pro_status_led_state) = 2;
+          }
     on_turn_off:
       - globals.set:
           id: pipower_pro_status_led_state
           value: '0'
-  # Power Switch
+  # Output Switch
   - platform: template
-    name: Power Switch
-    id: pipower_pro_power_switch
+    name: Output Switch
+    id: pipower_pro_output_switch
     icon: mdi:power
     device_class: SWITCH
-    lambda: return id(pipower_pro_power_switch_current_state);
+    lambda: return id(pipower_pro_output_switch_state);
     turn_on_action:
       - switch.turn_on: pipower_pro_external_output
       - switch.turn_on: pipower_pro_battery_output
       - globals.set:
-          id: pipower_pro_power_switch_current_state
+          id: pipower_pro_output_switch_state
           value: 'true'
     turn_off_action:
       - switch.turn_off: pipower_pro_external_output
       - switch.turn_off: pipower_pro_battery_output
       - globals.set:
-          id: pipower_pro_power_switch_current_state
+          id: pipower_pro_output_switch_state
           value: 'false'
   # Status LED
   - platform: gpio
@@ -491,23 +536,44 @@ binary_sensor:
     internal: true
     id: pipower_pro_power_button
     publish_initial_state: true
-    on_state:
-      then:
-        - if:
-            condition:
-              binary_sensor.is_on: pipower_pro_power_button
-            then:
-              - switch.turn_on: pipower_pro_power_switch
-              - switch.turn_on: pipower_pro_esp32_power
     on_multi_click:
-        - timing:
-            - ON for at least 2s
-          then:
-            - switch.turn_off: pipower_pro_power_switch
-        - timing:
-            - ON for at least 3s
-          then:
-            - switch.turn_off: pipower_pro_esp32_power
+      - timing:
+          - ON for at least 100ms
+        then:
+          if:
+            condition:
+              lambda: |- 
+                return id(pipower_pro_boot_mode).active_index() == 1 ||
+                       id(pipower_pro_boot_mode).active_index() == 2 ||
+                       id(pipower_pro_boot_mode).active_index() == 3;
+            then:
+              - select.set: 
+                  id: pipower_pro_boot_mode
+                  option: "FULL"
+      - timing:
+          - ON for at least 2s
+        then:
+          if:
+            condition:
+              lambda: return id(pipower_pro_boot_mode).active_index() == 4;
+            then:
+              - select.set: 
+                  id: pipower_pro_boot_mode
+                  option: "IDLE"
+      - timing:
+          - ON for at least 3s
+        then:
+          if:
+            condition:
+              binary_sensor.is_on: pipower_pro_external_power
+            then:
+              - select.set: 
+                  id: pipower_pro_boot_mode
+                  option: "CHARGE_ONLY"
+            else:
+              - select.set: 
+                  id: pipower_pro_boot_mode
+                  option: "OFF"
   - platform: template
     name: Battery Low
     device_class: BATTERY
@@ -539,25 +605,23 @@ binary_sensor:
     pin: 42
     id: pipower_pro_sub_device_power_state
 
-
 button:
   # Factory Reset
   - platform: factory_reset
     name: Factory Reset
-
 
 text_sensor:
   # Version
   - platform: template
     name: "Version"
     id: pipower_pro_version
-  # Power Source
+  # Output Source
   - platform: template
-    name: "Power Source"
+    name: "Output Source"
     update_interval: 1s
     icon: mdi:power-plug-battery-outline
     lambda: |-
-      if (id(pipower_pro_power_switch).state == false) {
+      if (id(pipower_pro_output_switch).state == false) {
         return {"OFF"};
       } else if (id(pipower_pro_power_source_state).state) {
         return {"External"};
@@ -618,7 +682,7 @@ script:
       level: float
     then:
       - lambda: |-
-          if (id(pipower_pro_power_switch).state == true || id(pipower_pro_input_voltage).state > 3.5f) {
+          if (id(pipower_pro_output_switch).state == true || id(pipower_pro_input_voltage).state > 3.5f) {
             if (level > 75) {
               id(pipower_pro_battery_indicator_25).turn_on();
               id(pipower_pro_battery_indicator_50).turn_on();
@@ -677,8 +741,8 @@ script:
       input_voltage: float
     then:
       - lambda: |-
-          // If not power on, set charge current to maximum
-          if (!id(pipower_pro_power_switch_current_state)) {
+          // If output disabled, set charge current to maximum
+          if (!id(pipower_pro_output_switch).state) {
             id(pipower_pro_charge_current_control).set_level(0);
             return;
           }
@@ -703,6 +767,11 @@ interval:
   - interval: 100ms
     then:
       - lambda: |-
+          // Turn off status LED if boot mode is OFF or CHARGE_ONLY
+          if (id(pipower_pro_boot_mode).active_index() == 1 ||
+              id(pipower_pro_boot_mode).active_index() == 2) {
+            id(pipower_pro_status_led).turn_off();
+          }
           switch(id(pipower_pro_status_led_state)) {
             case 0:
               id(pipower_pro_status_led).turn_off();
@@ -745,11 +814,14 @@ interval:
   - interval: 1s
     then:
       - lambda: |-
-          if (id(pipower_pro_wifi_connected) != id(pipower_pro_last_wifi_connected) && id(pipower_pro_power_switch_current_state) == true) {
-            if (id(pipower_pro_wifi_connected) == true) {
-              id(pipower_pro_status_led_state) = 1;
-            } else {
-              id(pipower_pro_status_led_state) = 2;
+          if (id(pipower_pro_wifi_connected) != id(pipower_pro_last_wifi_connected)) {
+            if (id(pipower_pro_boot_mode).active_index() == 3 ||
+                id(pipower_pro_boot_mode).active_index() == 4) {
+              if (id(pipower_pro_wifi_connected) == true) {
+                id(pipower_pro_status_led_state) = 1;
+              } else {
+                id(pipower_pro_status_led_state) = 2;
+              }
+              id(pipower_pro_last_wifi_connected) = id(pipower_pro_wifi_connected);
             }
-            id(pipower_pro_last_wifi_connected) = id(pipower_pro_wifi_connected);
           }
