@@ -278,7 +278,7 @@ switch:
     id: pipower_pro_esp32_power
     restore_mode : "ALWAYS_OFF"
     pin: 
-      number: 6
+      number: 4
       inverted: false
     on_turn_on:
       - lambda: |-
@@ -392,7 +392,7 @@ sensor:
     unit_of_measurement: V
   # Battery Current
   - platform: adc
-    pin: 5
+    pin: 6
     name: Battery Current
     id: pipower_pro_battery_current
     attenuation: 11db
@@ -471,7 +471,7 @@ sensor:
       - lambda: return x * 2.0f;
   # Output Current
   - platform: adc
-    pin: 4
+    pin: 5
     name: Output Current
     id: pipower_pro_output_current
     attenuation: 11db
