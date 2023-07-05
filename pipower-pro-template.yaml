@@ -445,7 +445,7 @@ sensor:
     lambda: |-
       int level = 0;
       if (id(pipower_pro_enable_coulomb_count) == false) {
-        level = (id(pipower_pro_battery_voltage).state - id(pipower_pro_edv0)) / (8.4 - id(pipower_pro_edv0)) * 100.0f;
+        level = (id(pipower_pro_battery_voltage).state - id(pipower_pro_edv0)) / (8.2 - id(pipower_pro_edv0)) * 100.0f;
       } else {
         level = id(pipower_pro_battery_capacity).state / id(pipower_pro_battery_max_capacity) * 100.0f;
       }
@@ -453,6 +453,8 @@ sensor:
       if (id(pipower_pro_simulate_low_power)) {
         level = 10;
       }
+      if (level < 0) level = 0;
+      else if (level > 100) level = 100;
       return level;
     on_value:
       then:
