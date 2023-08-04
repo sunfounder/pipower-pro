@@ -1,52 +1,64 @@
-进阶功能
+Advanced Features
 =============================
 
-库仑计(Beta)
--------------------
+Coulomb Counter (Beta)
+----------------------------------
 
-库仑计算法可以提高电池电量计算的精准度,但目前仍在Beta阶段,可能会出现严重计算不精准的问题,请谨慎选择使用。
+The Coulomb Counter algorithm can improve the accuracy of battery capacity 
+calculation, but it is currently in the beta stage and may result in serious 
+inaccuracies. Please use it with caution.
 
-**使用库仑计的方法：**
+**Enable the Coulomb Counter**
 
-1. 在Home Assistant页面,点击左侧栏的开发者工具
-2. 在开发者工具页面选择服务选项卡
-3. 在服务列表中选择服务：ESPHome: pipower_pro_enable_coulomb_count_beta
-4. 把enable_coulomb_count_beta开关打开
-5. 点击下方的调用服务即可。
-6. 可以通过实体sensor.pipower_pro_battery_capacity_algorithm看到当前选择的电量计的算法。
+1. Go to the Home Assistant page and click on "Developer Tools" on the left sidebar.
+2. In the Developer Tools page, select the "Services" tab.
+3. In the list of services, choose ``ESPHome: pipower_pro_enable_coulomb_count_beta``.
+4. Turn on the switch for ``enable_coulomb_count_beta``.
+5. Click the **Call Service** button below.
+6. You can check the currently selected battery capacity algorithm in the entity ``sensor.pipower_pro_battery_capacity_algorithm``.
 
-**算法**
+**Algorithm**
 
-库仑计算法是对电池每一秒的电流监测和电压监测计算出能量再进行积分。
-Capacity += Voltage * Current
+The Coulomb Counter algorithm calculates the energy by integrating the current and voltage measurements of the battery every second.
 
-**匹配**
+``Capacity += Voltage * Current``
 
-而这个积分算出的容量只是从当前开始充放电的电量。和电池实际的容量关联上的话,还需要做一次匹配。
-这里的匹配方法很简单。PiPower 出厂设定的电量值是电池的标称电量2000mAh,电池当前实际的电量值一定会比这个值少。只要对电池进行充电,电量值又被设定上限为标称值2000mAh(可以通过这个服务进行更改set_battery_factory_capacity),那么电池充满点的时候,电量值和电池的实际容量就都是满电的2000mAh,这样积分计算的电量值就和实际电池电量值匹配上了。
+**Matching**
 
-**自动校准**
+The capacity calculated by this integration is only 
+the charge/discharge energy from the current moment. 
+To associate it with the actual capacity of the battery, 
+a matching process is needed.
+The matching method here is simple. 
+PiPower Pro's default battery capacity is the nominal capacity of the battery, 
+which is 2000mAh. The actual battery capacity will be less than this value. 
+As long as the battery is charged, 
+the capacity will be set to the maximum of 2000mAh 
+(can be changed using the service ``set_battery_factory_capacity``), 
+so when the battery is fully charged, 
+the capacity value matches the actual battery capacity of 2000mAh, 
+and the integration calculation value matches the actual battery capacity value.
 
-积分容易产生累计误差,电池也会随着使用时长,寿命降低,容量也会减少,而达不到标称的2000mAh。
-所以需要使用一些校准手段来对电池容量进行校准。
+**Auto Calibration**
 
-这里使用的是(Compensated End of Discharge Voltage)CEDV校准法。
-CEDV校准法原理是在电池End of Discharge的时候的电压是相对准确的,
-而且在这个时候的电压曲线也是最陡峭的,以这个电压值作为一个校准点会比较合适。
-所以这里我们设置了3个EDV点。
-分别是 edv2(7%), edv1(3%) 和 edv0(0%)。
+Integration can accumulate errors, and the battery capacity will decrease as the battery is used over time, which may not reach the nominal 2000mAh capacity.
+Therefore, some calibration methods need to be used to calibrate the battery capacity.
 
-PiPower Pro设定这3个校准电压后,在电池放电至这3个点时,都会对电池做一次校准:
+Here, the Compensated End of Discharge Voltage (CEDV) calibration method is used.
+The principle of the CEDV calibration method is that the voltage at the end of the battery discharge is relatively accurate, and the voltage curve at this time is also the steepest. Using this voltage as a calibration point is more appropriate.
+So here we set 3 EDV points: edv2 (7%), edv1 (3%), and edv0 (0%).
+
+After setting these 3 calibration voltages, when the battery is discharged to these 3 points, PiPower Pro will calibrate the battery:
 ``MaxCapacity = MaxCapacity - Capacity + MaxCapacity * 7%``
-为了防止电压波动导致无限次同一地方校准, 
-限定每次在充电达到 RCV(Reset Calibration Voltage,默认8.0V) 之前只校准一次。
-edv2,edv1,edv0和rcv都可以在服务Service中配置,详见 :ref:`entity`
+To avoid unlimited calibration at the same point due to voltage fluctuations, calibration is limited to once before charging reaches RCV (Reset Calibration Voltage, default 8.0V).
+Both edv2, edv1, edv0, and rcv can be configured in the service Service, see :ref:`entity` for details.
 
 
 **Indicator**
 
-库仑计算法启用后，电量指示灯也会切换成库仑计。
-但是它有小概率出现电量读取错误，甚至电量会无故清零的情况。
+When the Coulomb Counter algorithm is enabled, 
+the battery indicator will also switch to the Coulomb Counter mode.
+However, there is a small chance of incorrect battery level readings or even the battery level resetting.
 
 The relationship between the battery indicators and power is as follows:
 
@@ -54,54 +66,53 @@ The relationship between the battery indicators and power is as follows:
 * 3 LEDs on:  50%
 * 2 LEDs on:  25%
 * 1 LED on:  10%
-* 4 LEDs all off: 0% ，at this time，batteries need to be charged.
+* 4 LEDs all off: 0%, batteries need to be charged.
 
 
-二次开发
-----------------
+Custom Development
+----------------------------------
 
-如果觉得PiPower Pro的基础功能满足不了你, 你可以对PiPower Pro进行二次开发。
+If you find that the basic functionality of PiPower Pro is not enough for your needs, you can perform custom development on PiPower Pro.
 
 
-PiPower Pro 的所有软件开源。以下是基础教程,和二次开发的准备。
+All software for PiPower Pro is open source. Below is the basic tutorial and preparation for custom development.
 
-1. 打开Home assistant 的开发者模式
-    a. 打开Homeassistant 管理页面
-    b. 选择左下角的配置
-2. 安装ESPhome
-    a. 打开Homeassistant 管理页面
-    b. 选择左下角的配置
-    c. 选择加载项
-    d. 点击添加
-    e. 搜索esphome
-    f. 点击安装
-    g. 安装完成后点击开启
-    h. 选择添加到侧边栏
-3. 新建一个设备
-    a. 点击侧边栏的ESPhome,进入ESPhome管理页面
-    b. 选择新设备
-    c. 输入设备名称,如PiPower Pro
-    d. 第一次配置还需要填写Wi-Fi账号密码
-    e. 选择ESP32 S2
-    f. 确认,并跳过安装。
-4. 配置新设备
-    a. 选择刚刚创建的设备,点击Edit,进入yaml编辑页面
-    b. 在最下面添加PiPower Pro template:
+1. Open the developer mode of Home Assistant.
+    a. Open the Home Assistant management page.
+    b. Select "Configuration" in the lower-left corner.
+2. Install ESPHome.
+    a. Open the Home Assistant management page.
+    b. Select "Configuration" in the lower-left corner.
+    c. Select "Add-ons."
+    d. Click "Add" button.
+    e. Search for "esphome."
+    f. Click "Install."
+    g. After installation, click "Start."
+    h. Select "Add to Sidebar."
+3. Create a new device.
+    a. Click "ESPhome" in the sidebar to enter the ESPHome management page.
+    b. Select "New Device."
+    c. Enter the device name, such as "PiPower Pro."
+    d. For the first configuration, you also need to enter the Wi-Fi account and password.
+    e. Select "ESP32 S2."
+    f. Confirm and skip the installation.
+4. Configure the new device.
+    a. Select the device you just created and click "Edit" to enter the YAML editing page.
+    b. At the bottom, add the PiPower Pro template:
 
         .. code-block::
 
             packages:
               remote_package: github://sunfounder/pipower-pro/pipower-pro-template.yaml@main
     
-    c. 点击右上角的Install,安装到PiPower Pro即可。
+    c. Click "Install" in the upper right corner to install it on PiPower Pro.
 
+Multiple PiPower Pro Units
+------------------------------------------
 
-
-多台PiPower Pro
--------------------------
-
-如果有多台多台PiPower Pro需要在同一Home Assistant 环境下使用,
-你需要修改yaml设置。在esphome下添加 ``name_add_mac_suffix: true``。
+If you have multiple PiPower Pro units to use in the same Home Assistant 
+environment, you need to modify the YAML settings. 
+Add ``name_add_mac_suffix: true`` under "esphome."
 
 .. code-block::
 
@@ -111,15 +122,12 @@ PiPower Pro 的所有软件开源。以下是基础教程,和二次开发的准�
       name_add_mac_suffix: true
 
 
-
-
-
-IO拓展
+IO Expansion
 -----------------
 
-J4排针是用于扩展的。IO来自ESP32 S2
+J4 is used for expansion. The IO comes from ESP32 S2.
 
-.. list-table:: IO扩展
+.. list-table:: IO Expansion
     :widths: 50 25 25 50
     :header-rows: 1
 
