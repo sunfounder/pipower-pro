@@ -252,13 +252,15 @@ About Battery
 ----------------------
 
 
-.. image:: img/2battery.jpg
-    :width: 300
-    :align: center
+.. .. image:: img/2battery.jpg
+..     :width: 300
+..     :align: center
 
-* **VCC**: Battery positive terminal, here there are two sets of VCC and GND is to increase the current and reduce the resistance.
+* **VCC**: Battery positive terminal, here there are 1 set of VCC and GND is to increase the current and reduce the resistance.
 * **Middle**: To balance the voltage between the two cells and thus protect the battery.
 * **GND**: Negative battery terminal.
 
 
-This is a custom battery pack made by SunFounder consisting of two 3.7V 18650 batteries with a capacity of 2200mAh. The connector is PH2.0-5P, which can be charged directly after being inserted into the PiPower.
+This is a custom battery pack made by SunFounder consisting of two 3.7V 18650 batteries 
+with a capacity of 2200mAh. The connector is PH2.0-3P, 
+which can be charged directly after being inserted into the PiPower.
