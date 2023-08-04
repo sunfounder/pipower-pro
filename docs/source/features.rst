@@ -229,38 +229,38 @@ The relationship between the battery indicators and voltage is as follows:
 
 
 
-About IO Pins
------------------
+.. About IO Pins
+.. -----------------
 
-.. image:: img/io_pin.png
-    :width: 500
-    :align: center
-
-In order to meet the DIY needs of customers, multiple signal pins are provided on the PiPower, but they are not soldered by default.
-
-* **GND**: Ground input
-* **BT_LV**: Get the battery voltage pin. The voltage of this pin is equal to 1/3 of the battery voltage.
-* **IN_DT**: Input detect pin. Used to determine if there is USB power input, if so, this pin outputs high.
-* **CHG**: Charging status indication pin. This pin is high when charging.
-* **LO_DT**: Battery low voltage status pin. In normal state, this pin is low. When low battery voltage is detected, this pin is high.
-* **EN:** Switch signal pin. the EN pin can be connected to an external switch, put the pin to ground, the PiPower is off. The external switch can not use self-recovery button or key, etc. The EN pin is only effective when the on-board switch is turned on.
-* **GND**: Ground input
-* **LED**: Power indicator pin. Output 5V at power on, need to add current limiting resistor in the middle when connect an external LED.
-* **GND**: Ground input
-
-About Battery
-----------------------
-
-
-.. .. image:: img/2battery.jpg
-..     :width: 300
+.. .. image:: img/io_pin.png
+..     :width: 500
 ..     :align: center
 
-* **VCC**: Battery positive terminal, here there are 1 set of VCC and GND is to increase the current and reduce the resistance.
-* **Middle**: To balance the voltage between the two cells and thus protect the battery.
-* **GND**: Negative battery terminal.
+.. In order to meet the DIY needs of customers, multiple signal pins are provided on the PiPower, but they are not soldered by default.
+
+.. * **GND**: Ground input
+.. * **BT_LV**: Get the battery voltage pin. The voltage of this pin is equal to 1/3 of the battery voltage.
+.. * **IN_DT**: Input detect pin. Used to determine if there is USB power input, if so, this pin outputs high.
+.. * **CHG**: Charging status indication pin. This pin is high when charging.
+.. * **LO_DT**: Battery low voltage status pin. In normal state, this pin is low. When low battery voltage is detected, this pin is high.
+.. * **EN:** Switch signal pin. the EN pin can be connected to an external switch, put the pin to ground, the PiPower is off. The external switch can not use self-recovery button or key, etc. The EN pin is only effective when the on-board switch is turned on.
+.. * **GND**: Ground input
+.. * **LED**: Power indicator pin. Output 5V at power on, need to add current limiting resistor in the middle when connect an external LED.
+.. * **GND**: Ground input
+
+.. About Battery
+.. ----------------------
 
 
-This is a custom battery pack made by SunFounder consisting of two 3.7V 18650 batteries 
-with a capacity of 2200mAh. The connector is PH2.0-3P, 
-which can be charged directly after being inserted into the PiPower.
+.. .. .. image:: img/2battery.jpg
+.. ..     :width: 300
+.. ..     :align: center
+
+.. * **VCC**: Battery positive terminal, here there are 1 set of VCC and GND is to increase the current and reduce the resistance.
+.. * **Middle**: To balance the voltage between the two cells and thus protect the battery.
+.. * **GND**: Negative battery terminal.
+
+
+.. This is a custom battery pack made by SunFounder consisting of two 3.7V 18650 batteries 
+.. with a capacity of 2200mAh. The connector is PH2.0-3P, 
+.. which can be charged directly after being inserted into the PiPower.
