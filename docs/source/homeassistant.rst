@@ -88,6 +88,7 @@ Configure Dashboard
     .. image:: img/sp230803_182835.png
 
 
+.. _add_card_by_editor:
 
 Add Card by Code Editor 
 -----------------------------------
