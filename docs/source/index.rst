@@ -37,5 +37,5 @@ Additionally, PiPower Pro offers external IO interfaces for controlling the on/o
     components
     assemble
     features
-    homeassistant
+    start
     faq
