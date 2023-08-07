@@ -35,10 +35,7 @@ Additionally, PiPower Pro offers external IO interfaces for controlling the on/o
 
 .. toctree::
     components
-    compatible
     assemble
     features
     homeassistant
-    shutdown
-    development
     faq

@@ -1,13 +1,11 @@
-How to use
-=======================================
-
 Add PiPower Pro in Home Assistant
----------------------------------
+==============================================
 
 PiPower Pro can be integrated into Home Assistant. 
 To do this, you need to have a Raspberry Pi with HassOS installed. 
 Please follow the link below for setup. 
-If you already have Home Assistant, please ignore.
+
+.. note:: If you already have Home Assistant, please ignore.
 
 .. toctree::
     install_hassos
@@ -341,4 +339,9 @@ here is a list of PiPower Pro entities you can use.
     * simulate_low_power - Simulate low power for testing low power trigger scenarios
 
 
+Advanced Usage
+==========================
 
+.. toctree::
+
+    development
