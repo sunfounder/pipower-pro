@@ -29,4 +29,9 @@ PiPower Pro compatible single board computers are shown below.
             
     <a href="_static/pdf/SBC_compatible.pdf" target="_blank">Compatible List</a>
 
+
+
+
+
+
 .. note:: Functionally Compatible means that it can be powered by PiPower Pro normally. 
