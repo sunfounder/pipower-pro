@@ -19,6 +19,7 @@ Setup Your PiPower-Pro Card in Home Assistant:
     homeassistant
     dashboard
     code_edit
+    entity
 
 The Advanced Usage:
 
