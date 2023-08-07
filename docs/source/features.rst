@@ -3,29 +3,35 @@ Features
 
 .. image:: img/media2.png
 
-* Pass Through Charging
-* Shutdown Current：< 0.5mA
-* Input:
+* **Pass Through Charging**
+* **Shutdown Current：< 0.5mA**
+* **Input:**
+
     * USB Type-C, 5V/3A
     * Battery Input
-* Output：
+* **Output：**
+
     * USB Type-A, 5V/3A
     * 2x4P P2.54 pin headers
 
-* Charging Power：5V/2A
-* Equipped Battery
+* **Charging Power：5V/2A**
+* **Equipped Battery**
+
     * Type: 3.7V Lithium-ion batteries x 2
     * Capacity: 2000mAh
     * Connector: PH2.0, 3P
-* Over Discharge Protection Voltage：6.0V
-* Overcharge Protection Voltage：8.4V
-* Dimension: 90mm x 60mm x 24.9mm
-* On-board Indicators
+
+* **Over Discharge Protection Voltage：6.0V**
+* **Overcharge Protection Voltage：8.4V**
+* **Dimension: 90mm x 60mm x 24.9mm**
+* **On-board Indicators**
+
     * 1 x Charging Indicator (CHG)
     * 1 x Power Indicator (PWR)
     * 4 Battery Indicators (D4 ~ D7)
-* On-board Power Switch
-* On-board MCU ESP32 S2
+
+* **On-board Power Switch**
+* **On-board MCU ESP32 S2**
 
 
 
