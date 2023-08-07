@@ -7,7 +7,7 @@ PiPower Pro compatible single board computers are shown below.
 
 
 .. list-table:: compatible list
-    :widths: 15 20 15 15 35
+    :widths: 15 20 10 10 45
     :header-rows: 1
 
 
