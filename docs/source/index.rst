@@ -34,6 +34,7 @@ Additionally, PiPower Pro offers external IO interfaces for controlling the on/o
 
 
 .. toctree::
+    About PiPower <self>
     components
     assemble
     features
