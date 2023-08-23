@@ -19,19 +19,17 @@ and the battery can be used normally.
 
 
 
-Which single board computers can PiPower Pro be used on?
+Which single-board computers can PiPower Pro be used on?
 ----------------------------------------------------------------------------------
 
-PiPower Pro compatible single board computers are shown below.
+PiPower Pro compatible single-board computers are shown below.
 
 
 .. raw:: html
             
     <a href="_static/pdf/SBC_compatible.pdf" target="_blank">Compatible List</a>
 
-
-
-
+    <br/> <br/>
 
 
 .. note:: Functionally Compatible means that it can be powered by PiPower Pro normally. 
