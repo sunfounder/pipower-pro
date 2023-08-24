@@ -1,14 +1,15 @@
-Configure Dashboard
+Dashboard konfigurieren
 ------------------------------
 
-1. On the Home Assistant page, click **Overview** on the left sidebar, which leads you to the control page.
+1. Auf der Home Assistant Seite klicken Sie links in der Seitenleiste auf **Overview**, dies führt Sie zur Steuerungsseite.
 
     .. image:: img/sp230803_182537.png
 
-2. Click the menu button, then select **Edit Dashboard**.
+2. Klicken Sie auf das Menü-Symbol und wählen Sie dann **Edit Dashboard**.
 
     .. image:: img/sp230803_182632.png
 
-3. Click on the bottom right to add a card, select the desired card from the options, configure it as needed, then save.
+3. Klicken Sie unten rechts, um eine Karte hinzuzufügen, wählen Sie die gewünschte Karte aus den Optionen, konfigurieren Sie sie nach Bedarf und speichern Sie dann.
 
     .. image:: img/sp230803_182835.png
+

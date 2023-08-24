@@ -1,35 +1,33 @@
+
 FAQ
 ==============
 
-PiPower Pro not working?
+PiPower Pro funktioniert nicht?
 ---------------------------
 
-When you put the battery in for the first time or when the battery is unplugged and put in again, 
-the battery will not work properly.
+Wenn Sie den Akku zum ersten Mal einlegen oder den Akku ausstecken und erneut einsetzen, 
+wird der Akku nicht ordnungsgemäß funktionieren.
 
+Das liegt daran, dass, wenn der Akku entfernt wird, 
+aufgrund des Mechanismus der integrierten Tiefentladeschutzschaltung,
+die Spannung als zu niedrig betrachtet wird, wodurch die Schutzschaltung aktiviert wird;
 
-This is because when the battery is removed, 
-due to the mechanism of the on-board over-discharge protection circuit, 
-the voltage will be considered too low, thus activating the protection circuit; 
-
-
-At this time, you need to plug the **Type C** cable into the charging port to release the protection circuit, 
-and the battery can be used normally.
-
+In diesem Fall müssen Sie das **Type C**-Kabel in den Ladeanschluss stecken, um die Schutzschaltung freizugeben,
+und der Akku kann normal verwendet werden.
 
 
 
-Which single-board computers can PiPower Pro be used on?
+Mit welchen Einplatinencomputern kann PiPower Pro verwendet werden?
 ----------------------------------------------------------------------------------
 
-PiPower Pro compatible single-board computers are shown below.
-
+Die mit PiPower Pro kompatiblen Einplatinencomputer sind unten aufgeführt.
 
 .. raw:: html
-            
-    <a href="_static/pdf/SBC_compatible.pdf" target="_blank">Compatible List</a>
+
+    <a href="_static/pdf/SBC_compatible.pdf" target="_blank">Kompatible Liste</a>
 
     <br/> <br/>
 
 
-.. note:: Functionally Compatible means that it can be powered by PiPower Pro normally. 
+.. note:: Funktionell kompatibel bedeutet, dass es normal von PiPower Pro mit Strom versorgt werden kann.
+

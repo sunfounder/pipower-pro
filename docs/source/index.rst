@@ -1,42 +1,40 @@
-PiPower - Raspberry Pi UPS with Battery
+PiPower - Raspberry Pi USV mit Batterie
 =============================================
 
 .. image:: img/media1.jpg
     :width: 600
 
-**What a UPS Does?**
+**Was macht eine USV?**
 
-If your Raspberry Pi project requires constant power, relying only on the main power system is not a viable option. Depending on your location, power drops and surges may occur frequently and often last for hours. Any power fluctuations can damage your Raspberry Pi, and a power outage will immediately shut it down. Consequently, it will not shut down safely, which can result in all data on the SD card being lost, increasing the chances of it being destroyed.
+Wenn Ihr Raspberry Pi Projekt eine konstante Stromversorgung benötigt, ist es nicht ratsam, sich nur auf das Hauptstromsystem zu verlassen. Je nach Standort können Stromausfälle und -spitzen häufig auftreten und oft stundenlang andauern. Jegliche Stromschwankungen können Ihren Raspberry Pi beschädigen, und ein Stromausfall wird ihn sofort ausschalten. Infolgedessen wird er nicht sicher herunterfahren, was dazu führen kann, dass alle Daten auf der SD-Karte verloren gehen und die Wahrscheinlichkeit erhöht, dass sie zerstört wird.
 
-Therefore, the use of an uninterruptible power supply (UPS) is recommended.
+Deshalb wird die Verwendung einer unterbrechungsfreien Stromversorgung (USV) empfohlen.
 
-With a UPS, if there is a power interruption from the mains (interruption = power outage), the battery or other power source will take over and continue to power the device without shutting it down. A UPS is often considered an emergency power source. After the main power source is repaired, the UPS will recharge and be ready to handle the next disaster.
+Mit einer USV übernimmt bei einem Stromausfall vom Hauptnetz die Batterie oder eine andere Energiequelle und versorgt das Gerät weiterhin ohne es auszuschalten. Eine USV wird oft als Notstromquelle betrachtet. Nachdem die Hauptstromquelle wiederhergestellt ist, wird die USV wieder aufgeladen und ist bereit für den nächsten Notfall.
 
-**About PiPower**
+**Über PiPower**
 
-That's why we designed PiPower in the first place. PiPower can be used as a second power source for the Raspberry Pi. A USB-C mains power supply plugged into the PiPower will directly power the Raspberry Pi and charge the battery at low current. PiPower can seamlessly power up a Raspberry Pi in the event of a power outage or disconnection of USB-C mains power.
+Genau aus diesem Grund haben wir PiPower entwickelt. PiPower kann als zweite Energiequelle für den Raspberry Pi verwendet werden. Ein USB-C Netzteil, das an den PiPower angeschlossen ist, versorgt den Raspberry Pi direkt mit Strom und lädt gleichzeitig die Batterie mit geringem Strom auf. PiPower kann einen Raspberry Pi bei einem Stromausfall oder bei Unterbrechung der USB-C Hauptversorgung nahtlos mit Energie versorgen.
 
-PiPower can output 5V/3A power supply to meet various Raspberry Pi usage situation. 
-It has 4 power indicators; each indicator represents 25% of the power, and is equipped with a power switch to turn on/off the power of the Raspberry Pi without plugging or unplugging the power cord.
+PiPower liefert eine 5V/3A Stromversorgung, um verschiedene Nutzungsszenarien des Raspberry Pi zu decken. 
+Es verfügt über 4 Energieindikatoren; jeder Indikator repräsentiert 25% der Energie und ist mit einem Schalter ausgestattet, um den Raspberry Pi ein-/auszuschalten, ohne das Netzkabel ein- oder auszustecken.
 
 .. warning::
-    When you put the battery in for the first time or when the battery is unplugged and put in again, the battery will not work properly, at this time, you need to plug the Type C cable into the charging port to turn off the protection circuit, and the battery can be used normally.
+    Wenn Sie den Akku zum ersten Mal einlegen oder wenn er entfernt und erneut eingesetzt wird, funktioniert der Akku nicht ordnungsgemäß. In diesem Fall müssen Sie das Typ-C-Kabel in den Ladeanschluss stecken, um den Schutzschaltkreis auszuschalten, und der Akku kann dann normal verwendet werden.
 
+**Über PiPower Pro** 
 
-**About PiPower Pro** 
+PiPower Pro baut auf PiPower auf und integriert ein ESP32 S2 Modul, das eine Echtzeitüberwachung der Batteriespannung und des aktuellen Zustands des Moduls, Eingangs-/Ausgangsspannung und -strom ermöglicht. Es verfügt zudem über eine intelligente Ladestromanpassung und einen nahtlosen Wechsel zwischen Eingangs- und Batteriestrom, um eine kontinuierliche Stromversorgung zu gewährleisten.
 
-PiPower Pro builds upon PiPower, integrating an ESP32 S2 module that enables real-time monitoring of the module's battery voltage and current status, input/output voltage and current. It also features intelligent charging current adjustment and seamless switching between input and battery power, ensuring uninterrupted power output.
+In Verbindung mit Home Assistant können Benutzer problemlos auf alle Parameterdaten zugreifen und diese überprüfen sowie Automatisierungen für intelligente Geräteszenarien konfigurieren.
 
-When integrated with Home Assistant, users can easily access and review all parameter data, as well as configure automation for smart device scenarios.
-
-Additionally, PiPower Pro offers external IO interfaces for controlling the on/off state of sub-devices. With its open-source ESPHome configuration, users can customize IO functionalities and expand the system with more sensors.
-
-
+Darüber hinaus bietet PiPower Pro externe IO-Schnittstellen zur Steuerung des Ein-/Aus-Zustands von Untergeräten. Mit seiner Open-Source-ESPHome-Konfiguration können Benutzer IO-Funktionalitäten anpassen und das System mit weiteren Sensoren erweitern.
 
 .. toctree::
-    About PiPower <self>
+    Über PiPower <self>
     components
     assemble
     features
     start
     faq
+

@@ -1,44 +1,50 @@
-Install the HassOS
+HassOS installieren
 --------------------------
 
-This section will guide you in installing the Home Assistant operating system on your Raspberry Pi. 
-Please note that this process will result in the loss of all existing content on your Raspberry Pi system. 
-It is important to backup your data before proceeding.
+Dieser Abschnitt wird Sie durch die Installation des Home Assistant Betriebssystems auf Ihrem Raspberry Pi führen.
+Bitte beachten Sie, dass durch diesen Prozess alle vorhandenen Inhalte auf Ihrem Raspberry Pi System gelöscht werden. Es ist wichtig, Ihre Daten vorher zu sichern.
 
-**Step 1**
+**Schritt 1**
 
-Raspberry Pi have developed a graphical SD card writing tool that works
-on Mac OS, Ubuntu 18.04 and Windows, and is the easiest option for most
-users as it will download the image and install it automatically to the
-SD card.
+Raspberry Pi hat ein grafisches SD-Karten-Schreibprogramm entwickelt, das
+unter Mac OS, Ubuntu 18.04 und Windows läuft und für die meisten
+Benutzer die einfachste Option ist, da es das Image automatisch herunterlädt und auf die
+SD-Karte installiert.
 
-Visit the download page: https://www.raspberrypi.org/software/. Click on
-the link for the **Raspberry Pi Imager** that matches your operating system,
-when the download finishes, click it to launch the installer.
+Besuchen Sie die Download-Seite: https://www.raspberrypi.org/software/. Klicken Sie auf
+den Link für den **Raspberry Pi Imager**, der zu Ihrem Betriebssystem passt.
+Nachdem der Download abgeschlossen ist, klicken Sie darauf, um den Installer zu starten.
 
 .. image:: img/image11.png
     :align: center
 
-**Step 2**
+.. raw:: html
 
-When you launch the installer, your operating system may try to block
-you from running it. For example, on Windows I receive the following
-message:
+    <br/>
 
-If this pops up, click on **More info** and then **Run anyway**, then
-follow the instructions to install the Raspberry Pi Imager.
+**Schritt 2**
+
+Wenn Sie den Installer starten, kann Ihr Betriebssystem versuchen,
+die Ausführung zu blockieren. Zum Beispiel erhalte ich unter Windows folgende
+Meldung:
+
+Erscheint diese Meldung, klicken Sie auf **Weitere Informationen** und dann auf **Trotzdem ausführen** und folgen Sie den Installationsanweisungen des Raspberry Pi Imagers.
 
 .. image:: img/image12.png
     :align: center
 
-**Step 3**
+.. raw:: html
+    
+    <br/>
 
-Insert your SD card into the computer or laptop SD card slot.
+**Schritt 3**
 
-**Step 4**
+Stecken Sie Ihre SD-Karte in den SD-Karten-Slot Ihres Computers oder Laptops.
 
-In the Raspberry Pi Imager, select the OS that you want to install and
-the SD card you would like to install it on.
+**Schritt 4**
+
+Im Raspberry Pi Imager wählen Sie das Betriebssystem, das Sie installieren möchten, und
+die SD-Karte, auf die es installiert werden soll.
 
 .. image:: img/sp230627_181014.png
 
@@ -48,66 +54,71 @@ the SD card you would like to install it on.
 
 .. image:: img/sp230627_181306.png
 
-**Step 5**
+**Schritt 5**
 
-Select the SD card you are using.
+Wählen Sie die SD-Karte, die Sie verwenden.
 
 .. image:: img/image14.png
     :align: center
 
+.. raw:: html
+    
+    <br/>
 
-**Step 6**
 
-Click the **WRITE** button.
+**Schritt 6**
 
+Klicken Sie auf den **WRITE**-Knopf.
 
 .. image:: img/sp230627_181444.png
 
+**Schritt 7**
 
-**Step 7**
-
-If your SD card currently has any files on it, you may wish to back up
-these files first to prevent you from permanently losing them. If there
-is no file to be backed up, click **Yes**.
+Falls auf Ihrer SD-Karte aktuell Dateien gespeichert sind, sollten Sie diese eventuell zuerst sichern, um sie nicht dauerhaft zu verlieren. Wenn keine Dateien gesichert werden müssen, klicken Sie auf **Yes**.
 
 .. image:: img/image18.png
     :align: center
 
+.. raw:: html
+    
+    <br/>
 
-**Step 8**
 
-After waiting for a period of time, the following window will appear to
-represent the completion of writing.
+**Schritt 8**
+
+Nach einer Weile wird das folgende Fenster erscheinen, um das erfolgreiche Schreiben zu bestätigen.
 
 .. image:: img/sp230628_161104.png
     :align: center
 
-**Step 9**
-
-Next, we will configure WiFi for Pironman.
-
-.. note:: If you intend to use a wired connection for network access, you can skip this step.
+.. raw:: html
+    
+    <br/>
 
 
-Open File Explorer and access the SD card named ``Hassio-boot``
+**Schritt 9**
+
+Als Nächstes konfigurieren wir das WLAN für Pironman.
+
+.. note:: Wenn Sie eine kabelgebundene Verbindung für den Netzwerkzugriff verwenden möchten, können Sie diesen Schritt überspringen.
+
+Öffnen Sie den Datei-Explorer und greifen Sie auf die als ``Hassio-boot`` benannte SD-Karte zu.
 
 .. image:: img/sp230628_095957.png
 
-Create a new folder named ``CONFIG`` in the root partition.
+Erstellen Sie im Hauptverzeichnis einen neuen Ordner namens ``CONFIG``.
 
 .. image:: img/sp230628_100453.png
 
-Create a folder named ``network`` inside the ``CONFIG`` folder.
+Innerhalb des ``CONFIG``-Ordners erstellen Sie einen Ordner namens ``network``.
 
 .. image:: img/sp230628_113426.png
 
-
-Inside the ``network`` folder, create a new text file named ``my-network`` (without extension).
+Innerhalb des ``network``-Ordners erstellen Sie eine neue Textdatei namens ``my-network`` (ohne Dateiendung).
 
 .. image:: img/sp230628_113506.png
 
-
-In the ``my-network`` file, write the following text, replacing ``MY_SSID`` and ``MY_WLAN_SECRET_KEY`` with your own network's SSID and password:
+In der Datei ``my-network`` schreiben Sie den folgenden Text und ersetzen dabei ``MY_SSID`` und ``MY_WLAN_SECRET_KEY`` durch den SSID und das Passwort Ihres Netzwerks:
 
 .. code-block::
 
@@ -119,7 +130,7 @@ In the ``my-network`` file, write the following text, replacing ``MY_SSID`` and 
     [802-11-wireless]
     mode=infrastructure
     ssid=MY_SSID
-    # Uncomment below if your SSID is not broadcasted
+    # Entfernen Sie das Kommentarzeichen unten, wenn Ihr SSID nicht gesendet wird
     #hidden=true
 
     [802-11-wireless-security]
@@ -134,29 +145,26 @@ In the ``my-network`` file, write the following text, replacing ``MY_SSID`` and 
     addr-gen-mode=stable-privacy
     method=auto
 
-Save and exit the file.
+Speichern und schließen Sie die Datei.
 
-**Step 10**
+**Schritt 10**
 
-Remove the microSD card from your computer and insert it into the Raspberry Pi. Then, connect the power (and Ethernet cable if needed).
+Entfernen Sie die microSD-Karte aus Ihrem Computer und stecken Sie sie in den Raspberry Pi. Schließen Sie dann den Strom an (und bei Bedarf das Ethernet-Kabel).
 
-Go back to your computer and navigate to ``homeassistant.local:8123`` , 
-or if that doesn't work, you can find the IP address by checking your router.
+Gehen Sie zurück zu Ihrem Computer und rufen Sie ``homeassistant.local:8123`` auf. Wenn dies nicht funktioniert, können Sie die IP-Adresse über Ihren Router herausfinden.
 
-During the first use of Home Assistant, you may need to wait for some time as it performs initial setup.
+Beim ersten Start von Home Assistant kann es eine Weile dauern, da die Ersteinrichtung durchgeführt wird.
 
 .. image:: img/sp230628_141749.png
 
-**Step 11**
+**Schritt 11**
 
-Next, you will be prompted to create the first account.
+Als Nächstes werden Sie aufgefordert, das erste Konto zu erstellen.
 
 .. image:: img/sp230627_135949.png
 
-The system will prompt you to install some detected devices, but for now, you can skip this by clicking FINISH.
+Das System wird Sie auffordern, einige erkannte Geräte zu installieren. Für den Moment können Sie dies jedoch überspringen und auf FERTIGSTELLEN klicken.
 
 .. image:: img/sp230627_141016.png
 
-Now you've set up Home Assistant.
-
-
+Jetzt haben Sie Home Assistant eingerichtet.

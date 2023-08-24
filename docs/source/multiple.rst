@@ -1,9 +1,10 @@
-Multiple PiPower Pro Units
+
+Mehrere PiPower Pro Einheiten
 ------------------------------------------
 
-If you have multiple PiPower Pro units to use in the same Home Assistant 
-environment, you need to modify the YAML settings. 
-Add ``name_add_mac_suffix: true`` under "esphome."
+Wenn Sie mehrere PiPower Pro Einheiten im gleichen Home Assistant 
+Umgebung verwenden möchten, müssen Sie die YAML-Einstellungen ändern.
+Fügen Sie ``name_add_mac_suffix: true`` unter "esphome" hinzu.
 
 .. code-block::
 

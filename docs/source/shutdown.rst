@@ -1,93 +1,92 @@
-
-Setting up Safe Shutdown
+Einrichten des sicheren Herunterfahrens
 ---------------------------------
 
-PiPower Pro has two pins that are pre-configured to 
-monitor the power status (referred to as sub-devices below) of connected devices, 
-enabling remote power on, power off, 
-and automatic safe shutdown when the battery is low.
+PiPower Pro verfügt über zwei vorab konfigurierte Pins, 
+um den Energiezustand (im Folgenden als Untergeräte bezeichnet) von angeschlossenen Geräten zu überwachen. 
+Dies ermöglicht das Fern-Einschalten, das Fern-Ausschalten 
+sowie ein automatisches sicheres Herunterfahren, wenn der Akku schwach ist.
 
-.. note:: If the host running HassOS is set as a sub-device of PiPower Pro, it will also lose its functionality when the host shuts down, and remote power-on will not be possible.
+.. note:: Wenn der mit HassOS betriebene Host als Untergerät von PiPower Pro eingerichtet ist, verliert er ebenfalls seine Funktion, wenn der Host heruntergefahren wird, und ein Fernstart ist nicht möglich.
 
-* Pin 42 and sensor entity ``binary_sensor.pipower_pro_sub_device_power_state`` read the current state of the device.
-* Pin 41 and entity ``switch.pipower_pro_sub_device_power`` control the sub-device power.
+* Pin 42 und Sensor-Entität ``binary_sensor.pipower_pro_sub_device_power_state`` lesen den aktuellen Zustand des Geräts.
+* Pin 41 und Entität ``switch.pipower_pro_sub_device_power`` steuern die Energieversorgung des Untergeräts.
 
-For example, let's use PiPower Pro as a UPS power source for a Raspberry Pi, 
-monitoring its status and automatically shutting it 
-down safely when external power is lost and the battery level is low.
+Zum Beispiel verwenden wir PiPower Pro als eine USV-Stromquelle für einen Raspberry Pi, 
+überwachen dessen Status und schalten ihn 
+automatisch sicher ab, wenn die externe Stromversorgung unterbrochen wird und der Akkuladestand niedrig ist.
 
-**Step 1**
+**Schritt 1**
 
-Configure the Raspberry Pi. 
+Konfigurieren Sie den Raspberry Pi.
 
-Set the two Raspberry Pi pins 
-to the **Power Status Signal Pin** 
-and **Shutdown Signal Pin** respectively. 
-This can be done through devicetree.
+Legen Sie die beiden Raspberry Pi-Pins 
+für den **Power Status Signal Pin** 
+und den **Shutdown Signal Pin** fest.
+Dies kann über devicetree gemacht werden.
 
-Insert the SD card with the Raspberry Pi system into your computer. 
-In the root directory of the boot partition, find ``config.txt``.
+Stecken Sie die SD-Karte mit dem Raspberry Pi-System in Ihren Computer.
+Im Stammverzeichnis der Boot-Partition finden Sie ``config.txt``.
 
 .. image:: img/sp230804_143344.png
 
-Open it and add the following two lines at the end under ``[all]``.
+Öffnen Sie diese und fügen Sie die folgenden zwei Zeilen am Ende unter ``[all]`` hinzu.
 
 .. code-block::
 
     dtoverlay=gpio-poweroff,gpiopin=17
     dtoverlay=gpio-shutdown,gpio_pin=18
 
-* ``gpio-poweroff`` is the Raspberry Pi's power on/off status. After successful configuration, the Raspberry Pi will set this pin high when powered on and pull it low when powered off.
-* ``gpio-shutdown`` controls the signal for shutting down the Raspberry Pi. After successful configuration, pulling this pin low will trigger the Raspberry Pi to shut down.
+* ``gpio-poweroff`` ist der Ein-/Ausschaltzustand des Raspberry Pi. Nach erfolgreicher Konfiguration setzt der Raspberry Pi diesen Pin beim Einschalten auf hoch und zieht ihn beim Ausschalten auf niedrig.
+* ``gpio-shutdown`` steuert das Signal zum Herunterfahren des Raspberry Pi. Nach erfolgreicher Konfiguration bewirkt das Ziehen dieses Pins auf niedrig, dass der Raspberry Pi heruntergefahren wird.
 
-**Step 2**
+**Schritt 2**
 
+* Verbinden Sie den Pin 42 von PiPower Pro mit dem ``gpio-poweroff``-Pin des Raspberry Pi, hier mit Pin 17.
+* Verbinden Sie den Pin 41 von PiPower Pro mit dem ``gpio-shutdown``-Pin des Raspberry Pi, hier mit Pin 18.
 
-* Connect PiPower Pro's pin 42 to the Raspberry Pi's ``gpio-poweroff`` pin, here using pin 17.
-* Connect PiPower Pro's pin 41 to the Raspberry Pi's ``gpio-shutdown`` pin, here using pin 18.
+**Schritt 3**
 
-**Step 3**
+Testen Sie nun, ob die beiden oben genannten Signale ordnungsgemäß funktionieren.
 
-Now test if the above two signals are working properly.
-
-Add two entities to the Dashboard: 
+Fügen Sie dem Dashboard zwei Entitäten hinzu:
 
 * ``binary_sensor.pipower_pro_sub_device_power_state``
 * ``switch.pipower_pro_sub_device_power``
 
-If you add the **Settings** Card (see :ref:`add_card_by_editor` for instructions on adding cards), these two entities will be included, labeled as ``PiPower-Pro Sub Device Power State`` and ``PiPower-Pro Sub Device Power``.
+Wenn Sie die **Settings**-Karte hinzufügen (siehe :ref:`add_card_by_editor` für Anweisungen zum Hinzufügen von Karten), werden diese beiden Entitäten enthalten sein und als ``PiPower-Pro Sub Device Power State`` und ``PiPower-Pro Sub Device Power`` bezeichnet.
 
 .. image:: img/sp230804_151521.png
 
-You can use the former to check if the Raspberry Pi is working and 
-the latter to power off the Raspberry Pi.
+Mit Ersterem können Sie überprüfen, ob der Raspberry Pi funktioniert, 
+und mit Letzterem können Sie den Raspberry Pi ausschalten.
 
-.. note:: ``PiPower-Pro Sub Device Power`` can only power off the Raspberry Pi. To power it on, you still need to supply power to the Raspberry Pi (i.e., turn on the main switch on the **PiPower Pro** Card).
+.. note:: ``PiPower-Pro Untergeräte-Strom`` kann den Raspberry Pi nur ausschalten. Um ihn einzuschalten, müssen Sie ihm weiterhin Strom zuführen (d.h., den Hauptschalter auf der **PiPower Pro**-Karte einschalten).
 
-**Step 4**
 
-Next, configure automations to enable PiPower Pro to safely shut down the Raspberry Pi:
+**Schritt 4**
 
-1. Open the Home Assistant configuration page, click on "Settings" on the left sidebar, and choose "Automations."
+Konfigurieren Sie nun Automatisierungen, um PiPower Pro einen sicheren Herunterfahren des Raspberry Pi zu ermöglichen:
+
+1. Öffnen Sie die Home Assistant Konfigurationsseite, klicken Sie in der linken Seitenleiste auf "Einstellungen" und wählen Sie "Automatisierungen."
 
     .. image:: img/sp230804_170032.png
 
-2. Create a new automation.
+2. Erstellen Sie eine neue Automatisierung.
 
     .. image:: img/sp230804_170118.png
 
     .. image:: img/sp230804_170148.png
 
-#. Click "Edit in YAML."
+3. Klicken Sie auf "In YAML bearbeiten."
 
     .. image:: img/sp230804_170218.png
 
-#. Replace the existing code with the following code.
+4. Ersetzen Sie den vorhandenen Code durch den folgenden Code.
 
     .. code-block::
 
-        alias: Safe shutdown RPi
-        description: Turn off Raspberry Pi if no external power plug in and battery low
+        alias: Sicherer Shutdown RPi
+        description: Raspberry Pi ausschalten, wenn keine externe Stromversorgung angeschlossen ist und der Akku schwach ist
         trigger:
           - platform: state
             entity_id:
@@ -115,21 +114,21 @@ Next, configure automations to enable PiPower Pro to safely shut down the Raspbe
             domain: switch
         mode: single
 
-#. Click "Save."
+5. Klicken Sie auf "Speichern."
 
     .. image:: img/sp230804_170504.png
 
-#. Click "rename."
+6. Klicken Sie auf "Umbenennen."
 
     .. image:: img/sp230804_170527.png
 
-#. Go back one level. Now you should see the newly set automation.
+7. Gehen Sie einen Schritt zurück. Nun sollten Sie die neu eingerichtete Automatisierung sehen.
 
     .. image:: img/sp230804_170710.png
 
-.. note:: We need to create a few more automations. Refer to the previous steps to complete them all.
+.. note:: Weitere Automatisierungen müssen erstellt werden. Befolgen Sie dazu die vorherigen Schritte.
 
-**Save Power**
+**Strom sparen**
 
 .. code-block::
 
@@ -161,8 +160,7 @@ Next, configure automations to enable PiPower Pro to safely shut down the Raspbe
         domain: switch
     mode: single
 
-**Sync Power Off RPi**
-
+**Sync Ausschalten RPi**
 
 .. code-block::
 
@@ -182,7 +180,7 @@ Next, configure automations to enable PiPower Pro to safely shut down the Raspbe
         domain: switch
     mode: single
 
-**Sync Power On RPi**
+**Sync Einschalten RPi**
 
 .. code-block::
 
@@ -202,21 +200,22 @@ Next, configure automations to enable PiPower Pro to safely shut down the Raspbe
         domain: switch
     mode: single
 
-**Step 5**
+**Schritt 5**
 
-We use a simulated low-power state to trigger the test:
+Um den Test auszulösen, simulieren wir einen Zustand niedriger Leistung:
 
-1. Open the SERVICES interface in Developer Tools.
+1. Öffnen Sie die SERVICES-Oberfläche in den Entwicklertools.
 
     .. image:: img/sp230804_171500.png
 
-2. Find ``ESPHome: pipower_pro_simulate_low_power``, enable it, and click the "Call Service" button.
+2. Finden Sie ``ESPHome: pipower_pro_simulate_low_power``, aktivieren Sie es und klicken Sie auf die Schaltfläche "Call Service".
 
     .. image:: img/sp230804_171721.png
 
-You will see the PiPower battery light go off, 
-and the battery level drop to 10% in the overview.
+Sie werden sehen, dass das PiPower-Batterielicht erlischt 
+und der Batteriestand im Überblick auf 10% sinkt.
 
-The Raspberry Pi will then shut down, 
-and 2 seconds after it completes the shutdown, 
-the PiPower Pro will power off, and the PWR light will go off.
+Der Raspberry Pi wird dann heruntergefahren,
+und 2 Sekunden nachdem er das Herunterfahren abgeschlossen hat,
+wird der PiPower Pro ausgeschaltet und die PWR-Leuchte erlischt.
+

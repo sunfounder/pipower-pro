@@ -1,20 +1,19 @@
-
 .. _add_card_by_editor:
 
-Add Card by Code Editor 
------------------------------------
+Karte mittels des Code-Editors hinzufügen
+------------------------------------------
 
-1. After adding any card, you can manually edit the card's yaml file. Click on **SHOW CODE EDITOR** on the card editing page.
+1. Nachdem Sie eine Karte hinzugefügt haben, können Sie die yaml-Datei der Karte manuell bearbeiten. Klicken Sie dazu auf **SHOW CODE EDITOR** auf der Kartenbearbeitungsseite.
 
-    .. image:: img/sp230803_183128.png
+   .. image:: img/sp230803_183128.png
 
-2. Then directly modify the yaml file. We provide some useful PiPower Pro configurations. Please copy the following yaml code directly into the box.
+2. Ändern Sie dann direkt die yaml-Datei. Wir bieten einige nützliche Konfigurationen für PiPower Pro an. Bitte kopieren Sie den folgenden yaml-Code direkt in das vorgesehene Feld.
 
-    .. image:: img/sp230803_183156.png
+   .. image:: img/sp230803_183156.png
 
-    .. image:: img/sp230803_183626.png
+   .. image:: img/sp230803_183626.png
 
-**Quick Overview**
+**Schnellübersicht**
 
 .. image:: img/ha_btrov.png
 
@@ -44,7 +43,7 @@ Add Card by Code Editor
             yellow: 2
             red: 2
             needle: true
-            name: Battery Current
+            name: Batteriestrom
           - type: gauge
             entity: sensor.pipower_pro_output_current
             min: 0
@@ -54,10 +53,10 @@ Add Card by Code Editor
             yellow: 2
             red: 2.5
             needle: true
-            name: Output Current
+            name: Ausgangsstrom
           - type: gauge
             entity: sensor.pipower_pro_battery_level
-            name: Battery Level
+            name: Batteriestand
             min: 0
             max: 100
             severity:
@@ -67,7 +66,8 @@ Add Card by Code Editor
             needle: true
         columns: 3
 
-**Battery Information**
+
+**Batterieinformationen**
 
 .. image:: img/ha_btrms.png
 
@@ -84,10 +84,10 @@ Add Card by Code Editor
       - entity: binary_sensor.pipower_pro_is_charging
       - entity: sensor.pipower_pro_battery_power
       - entity: sensor.pipower_pro_battery_level
-    title: Battery
+    title: Batterie
     columns: 3
 
-**Output Information**
+**Ausgabeinformationen**
 
 .. image:: img/ha_opms.png
 
@@ -102,19 +102,18 @@ Add Card by Code Editor
       - entity: sensor.pipower_pro_output_current
       - entity: sensor.pipower_pro_output_power
       - entity: sensor.pipower_pro_output_energy
-    title: Output
+    title: Ausgabe
 
-**Battery Chart**
+**Batterie-Diagramm**
 
 .. image:: img/ha_btrcht.png
-
 
 .. code-block::
 
     type: vertical-stack
     cards:
       - type: markdown
-        content: '## Battery'
+        content: '## Batterie'
       - square: true
         columns: 3
         type: grid
@@ -124,21 +123,22 @@ Add Card by Code Editor
             type: sensor
             entity: sensor.pipower_pro_battery_current
             detail: 2
-            name: Current
+            name: Strom
           - hours_to_show: 12
             graph: line
             type: sensor
             entity: sensor.pipower_pro_battery_voltage
             detail: 2
-            name: Voltage
+            name: Spannung
           - hours_to_show: 12
             graph: line
             type: sensor
             entity: sensor.pipower_pro_battery_power
             detail: 2
-            name: Power
+            name: Leistung
 
-**Output Chart**
+
+**Ausgabe-Diagramm**
 
 .. image:: img/ha_opcht.png
 
@@ -147,7 +147,7 @@ Add Card by Code Editor
     type: vertical-stack
     cards:
       - type: markdown
-        content: '## Output'
+        content: '## Ausgabe'
       - square: true
         columns: 3
         type: grid
@@ -157,21 +157,21 @@ Add Card by Code Editor
             type: sensor
             entity: sensor.pipower_pro_output_voltage
             detail: 2
-            name: Voltage
+            name: Spannung
           - hours_to_show: 12
             graph: line
             type: sensor
             entity: sensor.pipower_pro_output_current
             detail: 2
-            name: Current
+            name: Strom
           - hours_to_show: 12
             graph: line
             type: sensor
             entity: sensor.pipower_pro_output_power
             detail: 2
-            name: Power
+            name: Leistung
 
-**Settings**
+**Einstellungen**
 
 .. image:: img/ha_setting.png
 
@@ -189,6 +189,6 @@ Add Card by Code Editor
       - entity: sensor.pipower_pro_version
       - entity: sensor.pipower_pro_battery_capacity_algorithm
       - entity: button.pipower_pro_factory_reset
-    title: Settings
+    title: Einstellungen
     show_header_toggle: false
     state_color: true

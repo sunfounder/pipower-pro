@@ -1,57 +1,57 @@
 .. _entity:
 
-PiPower Pro Entity
+PiPower Pro Entität
 --------------------------
 
-If you are familiar with Home Assistant and want to customize the Card yourself, 
-here is a list of PiPower Pro entities you can use.
+Wenn Sie mit Home Assistant vertraut sind und die Karte selbst anpassen möchten, 
+finden Sie hier eine Liste der PiPower Pro Entitäten, die Sie verwenden können.
 
-**Basic Information**
-    * binary_sensor.pipower_pro_battery_low - Battery low status (bool)
-    * binary_sensor.pipower_pro_is_charging - Charging status (V)
+**Grundinformationen**
+    * ``binary_sensor.pipower_pro_battery_low`` - Batteriestatus niedrig (bool)
+    * ``binary_sensor.pipower_pro_is_charging`` - Ladezustand (V)
 
-**Switches**
-    * switch.pipower_pro_battery_output - Battery output switch (bool)
-    * switch.pipower_pro_esp32_power - ESP32 power switch (bool)
-    * switch.pipower_pro_external_output - External output switch (bool)
+**Schalter**
+    * ``switch.pipower_pro_battery_output`` - Batterieausgangsschalter (bool)
+    * ``switch.pipower_pro_esp32_power`` - ESP32 Energieversorgungsschalter (bool)
+    * ``switch.pipower_pro_external_output`` - Externer Ausgangsschalter (bool)
 
-**Output**
-    * sensor.pipower_pro_output_voltage - Output voltage (V)
-    * sensor.pipower_pro_output_current - Output current (A)
-    * sensor.pipower_pro_output_power - Output power (W)
-    * sensor.pipower_pro_output_energy - Output energy (Wh) used for calculating total output energy, can be reset via services, see all services for details
+**Ausgabe**
+    * ``sensor.pipower_pro_output_voltage`` - Ausgangsspannung (V)
+    * ``sensor.pipower_pro_output_current`` - Ausgangsstrom (A)
+    * ``sensor.pipower_pro_output_power`` - Ausgangsleistung (W)
+    * ``sensor.pipower_pro_output_energy`` - Verbrauchte Ausgangsenergie (Wh), wird zur Berechnung der gesamten Ausgangsenergie verwendet, kann über Dienste zurückgesetzt werden, siehe alle Dienste für Details
 
-**Battery**
-    * sensor.pipower_pro_battery_voltage - Battery voltage (V)
-    * sensor.pipower_pro_battery_current - Battery current, positive for charging, negative for discharging (A)
-    * sensor.pipower_pro_battery_power - Battery output power (W)
-    * sensor.pipower_pro_battery_capacity - Battery capacity (mAh)
-    * sensor.pipower_pro_battery_level - Battery level (%)
+**Batterie**
+    * ``sensor.pipower_pro_battery_voltage`` - Batteriespannung (V)
+    * ``sensor.pipower_pro_battery_current`` - Batteriestrom, positiv beim Laden, negativ beim Entladen (A)
+    * ``sensor.pipower_pro_battery_power`` - Batterieausgangsleistung (W)
+    * ``sensor.pipower_pro_battery_capacity`` - Batteriekapazität (mAh)
+    * ``sensor.pipower_pro_battery_level`` - Batterieladestand (%)
 
-**Input**
-    * sensor.pipower_pro_input_voltage - External input voltage (V)
+**Eingang**
+    * ``sensor.pipower_pro_input_voltage`` - Externe Eingangsspannung (V)
 
-**Sub-device Control**
-    * switch.pipower_pro_sub_device_power - Sub-device power control signal (bool)
-    * binary_sensor.pipower_pro_sub_device_power_state - Sub-device power state (bool)
+**Steuerung von Untergeräten**
+    * ``switch.pipower_pro_sub_device_power`` - Stromsteuersignal des Untergeräts (bool)
+    * ``binary_sensor.pipower_pro_sub_device_power_state`` - Betriebszustand des Untergeräts (bool)
 
-**Others**
-    * sensor.pipower_pro_battery_capacity_algorithm - Battery capacity algorithm (String)
-    * sensor.pipower_pro_power_source - Current output source: Battery/External (String)
-    * sensor.pipower_pro_battery_factory_capacity - Battery factory nominal capacity (mAh)
-    * binary_sensor.pipower_pro_external_power - External input status (bool)
-    * button.pipower_pro_factory_reset - Factory reset button (bool)
-    * update.pipower_pro_firmware - Update firmware
-    * switch.pipower_pro_power_switch - Output switch (bool)
-    * sensor.pipower_pro_version - PiPower Pro version (String)
+**Sonstiges**
+    * ``sensor.pipower_pro_battery_capacity_algorithm`` - Batteriekapazitätsalgorithmus (String)
+    * ``sensor.pipower_pro_power_source`` - Aktuelle Energiequelle: Batterie/Extern (String)
+    * ``sensor.pipower_pro_battery_factory_capacity`` - Nominale Kapazität der Batterie ab Werk (mAh)
+    * ``binary_sensor.pipower_pro_external_power`` - Externer Eingangszustand (bool)
+    * ``button.pipower_pro_factory_reset`` - Taster für Werksreset (bool)
+    * ``update.pipower_pro_firmware`` - Firmware aktualisieren
+    * ``switch.pipower_pro_power_switch`` - Ausgangsschalter (bool)
+    * ``sensor.pipower_pro_version`` - PiPower Pro Version (String)
 
-**All Services**
-    * set_battery_factory_capacity - Modify battery factory nominal capacity (capacity: int, mAh), default 2000
-    * enable_coulomb_count_beta - Enable Coulomb counting algorithm (enable: bool), default false
-    * reset_capacity - Reset current capacity to factory nominal capacity
-    * reset_output_energy - Reset output energy to 0
-    * set_edv2 - Set End of Discharge Voltage 2, voltage for end-of-discharge calibration 2, default 6.8. See Coulomb count for details
-    * set_edv1 - Set End of Discharge Voltage 1, voltage for end-of-discharge calibration 1, default 6.5. See Coulomb count for details
-    * set_edv0 - Set End of Discharge Voltage 0, voltage for end-of-discharge calibration 0, default 6.2. See Coulomb count for details
-    * set_rcv - Set Reset Calibrate Voltage, voltage for reset calibration status, default 8.0. See Coulomb count for details
-    * simulate_low_power - Simulate low power for testing low power trigger scenarios
+**Alle Dienste**
+    * ``set_battery_factory_capacity`` - Ändern Sie die nominale Kapazität der Batterie ab Werk (capacity: int, mAh), Standardwert 2000
+    * ``enable_coulomb_count_beta`` - Coulomb-Zählalgorithmus aktivieren (enable: bool), Standardwert false
+    * ``reset_capacity`` - Aktuelle Kapazität auf nominale Werkkapazität zurücksetzen
+    * ``reset_output_energy`` - Ausgangsenergie auf 0 zurücksetzen
+    * ``set_edv2`` - Festlegen der Spannung für das Ende der Entladungskalibrierung 2, Standard 6.8. Siehe Coulomb-Zählung für Details
+    * ``set_edv1`` - Festlegen der Spannung für das Ende der Entladungskalibrierung 1, Standard 6.5. Siehe Coulomb-Zählung für Details
+    * ``set_edv0`` - Festlegen der Spannung für das Ende der Entladungskalibrierung 0, Standard 6.2. Siehe Coulomb-Zählung für Details
+    * ``set_rcv`` - Festlegen der Spannung zum Zurücksetzen des Kalibrierungsstatus, Standard 8.0. Siehe Coulomb-Zählung für Details
+    * ``simulate_low_power`` - Simulieren eines niedrigen Energiezustands zum Testen von Szenarien mit niedrigem Energieauslöser

@@ -1,39 +1,41 @@
-Custom Development
+
+Maßgeschneiderte Entwicklung
 ----------------------------------
 
-If you find that the basic functionality of PiPower Pro is not enough for your needs, you can perform custom development on PiPower Pro.
+Sollten Sie feststellen, dass die Grundfunktionen von PiPower Pro nicht ausreichend für Ihre Anforderungen sind, können Sie individuelle Entwicklungen für PiPower Pro durchführen.
 
+Die gesamte Software für PiPower Pro ist Open Source. Hier finden Sie das Grundtutorial und die Vorbereitung für die individuelle Entwicklung.
 
-All software for PiPower Pro is open source. Below is the basic tutorial and preparation for custom development.
+1. Aktivieren Sie den Entwicklermodus von Home Assistant.
+    a. Öffnen Sie die Home Assistant Verwaltungsseite.
+    b. Wählen Sie "Configuration" in der unteren linken Ecke.
+2. Installieren Sie ESPHome.
+    a. Öffnen Sie die Home Assistant Verwaltungsseite.
+    b. Wählen Sie "Configuration" in der unteren linken Ecke.
+    c. Wählen Sie "Add-ons".
+    d. Klicken Sie auf den "Add"-Button.
+    e. Suchen Sie nach "esphome".
+    f. Klicken Sie auf "Installieren".
+    g. Nach der Installation klicken Sie auf "Start".
+    h. Wählen Sie "Add to Sidebar".
+3. Erstellen Sie ein neues Gerät.
+    a. Klicken Sie in der Seitenleiste auf "ESPhome", um die ESPHome Verwaltungsseite aufzurufen.
+    b. Wählen Sie "New Device".
+    c. Geben Sie den Gerätenamen ein, z.B. "PiPower Pro".
+    d. Bei der ersten Konfiguration müssen Sie auch das WLAN-Konto und das Passwort eingeben.
+    e. Wählen Sie "ESP32 S2".
+    f. Bestätigen Sie und überspringen Sie die Installation.
+4. Konfigurieren Sie das neue Gerät.
+    a. Wählen Sie das gerade erstellte Gerät aus und klicken Sie auf "Edit", um die YAML-Bearbeitungsseite zu öffnen.
+    b. Fügen Sie am Ende die PiPower Pro Vorlage hinzu:
 
-1. Open the developer mode of Home Assistant.
-    a. Open the Home Assistant management page.
-    b. Select "Configuration" in the lower-left corner.
-2. Install ESPHome.
-    a. Open the Home Assistant management page.
-    b. Select "Configuration" in the lower-left corner.
-    c. Select "Add-ons."
-    d. Click "Add" button.
-    e. Search for "esphome."
-    f. Click "Install."
-    g. After installation, click "Start."
-    h. Select "Add to Sidebar."
-3. Create a new device.
-    a. Click "ESPhome" in the sidebar to enter the ESPHome management page.
-    b. Select "New Device."
-    c. Enter the device name, such as "PiPower Pro."
-    d. For the first configuration, you also need to enter the Wi-Fi account and password.
-    e. Select "ESP32 S2."
-    f. Confirm and skip the installation.
-4. Configure the new device.
-    a. Select the device you just created and click "Edit" to enter the YAML editing page.
-    b. At the bottom, add the PiPower Pro template:
+       .. code-block::
 
-        .. code-block::
-
-            packages:
-              remote_package: github://sunfounder/pipower-pro/pipower-pro-template.yaml@main
+           packages:
+             remote_package: github://sunfounder/pipower-pro/pipower-pro-template.yaml@main
     
-    c. Click "Install" in the upper right corner to install it on PiPower Pro.
+    c. Klicken Sie in der oberen rechten Ecke auf "Installieren", um es auf PiPower Pro zu installieren.
+
+
 
 

@@ -1,272 +1,159 @@
-Features
+Merkmale
 ===============
 
 .. image:: img/media2.png
 
-* **Pass Through Charging**
-* **Shutdown Current：< 0.5mA**
-* **Input:**
+* **Durchladefunktion**
+* **Abschaltstrom：< 0.5mA**
+* **Eingang:**
 
-    * USB Type-C, 5V/3A
-    * Battery Input
-* **Output：**
+    * USB Typ-C, 5V/3A
+    * Batterie-Eingang
+* **Ausgang:**
 
-    * USB Type-A, 5V/3A
-    * 2x4P P2.54 pin headers
+    * USB Typ-A, 5V/3A
+    * 2x4P P2.54 Pin-Header
 
-* **Charging Power：5V/2A**
-* **Equipped Battery**
+* **Ladeleistung: 5V/2A**
+* **Integrierter Akku:**
 
-    * Type: 3.7V Lithium-ion batteries x 2
-    * Capacity: 2000mAh
-    * Connector: PH2.0, 3P
+    * Typ: 3,7V Lithium-Ionen-Akkus x 2
+    * Kapazität: 2000mAh
+    * Anschluss: PH2.0, 3P
 
-* **Over Discharge Protection Voltage：6.0V**
-* **Overcharge Protection Voltage：8.4V**
-* **Dimension: 90mm x 60mm x 24.9mm**
-* **On-board Indicators**
+* **Überentladungsschutzspannung: 6,0V**
+* **Überladeschutzspannung: 8,4V**
+* **Abmessungen: 90mm x 60mm x 24,9mm**
+* **Bordindikatoren:**
 
-    * 1 x Charging Indicator (CHG)
-    * 1 x Power Indicator (PWR)
-    * 4 Battery Indicators (D4 ~ D7)
+    * 1 x Ladeanzeige (CHG)
+    * 1 x Netzindikator (PWR)
+    * 4 Batterieindikatoren (D4 ~ D7)
 
-* **On-board Power Switch**
+* **Bordnetzschalter**
 * **On-board MCU ESP32 S2**
 
 
-
-
-
-
-.. 详细介绍
-.. ------------------------------------
-
-.. **STAT LED**
-
-.. STAT LED是ESP32 S2 的状态指示灯。
-
-.. * 熄灭：ESP32 S2关机*
-.. * 慢闪烁：ESP32 S2 开机，Wi-Fi未连接
-.. * 常亮：ESP32 S2 开机，Wi-Fi连接
-
-.. .. note:: 所谓的“ESP32 S2关机”状态，在USB Type C输入电源插入的时候，ESP32 S2处于“关机”状态但并没有真的关机。因为电量LED需要ESP32 S2来控制点亮，部分功能也可能会正常使用。但拔掉USB Type C输入电源时，ESP32 S2将彻底关机。
-
-.. **Switch Power Path**
-
-.. PiPower Pro整合电源路径功能，可以自动切换电源路径，最大程度保证输出。
-
-.. 1. 在外接供电时，5V输出由USB Type C外接直接输出，可用开关关断。外接电源在保证输入电压大于4.6V的情况下，以尽可能大的电流给电池充电（详见充电电流）。
-.. 2. 拔掉电源瞬间，系统自动切换为电池降压输出供电，无缝切换，保护系统在断电时能正常使用。
-.. 3. 外接供电不足4.6V时，自动使用电池补充供电，保证外部设备不会断电。
-
-.. .. list-table:: 输出供电逻辑
-..     :widths: 25 50 50
-..     :header-rows: 1
-
-..     * - 开关 
-..       - 外接电源 
-..       - 输出状态
-..     * - 打开 
-..       - 插入 
-..       - 外接供电
-..     * - 打开 
-..       - 拔出或电压低于4.6V
-..       - 电池供电
-..     * - 关闭 
-..       - 插入 
-..       - 关闭
-..     * - 关闭 
-..       - 拔出或电压低于4.6V
-..       - 关闭
-
-
-.. **Charging Power**
-
-.. 开机状态下充电电流会根据输入电压大小自动调节。
-
-.. .. list-table:: 充电电流逻辑
-..     :widths: 25 50
-..     :header-rows: 1
-
-..     * - 开关 
-..       - 充电电流
-..     * - 打开 
-..       - 按输入电压调节
-..     * - 关闭 
-..       - 2A
-
-.. 1. 开关在关闭状态下，PiPower Pro没有对外供电，这时充电电流最大达到2A，快速充电。从0%-100%充电时间约2小时10分钟左右。
-.. 2. 在开关打开状态下，由于PiPower Pro需要对外供电，这时外接USB需要同时对外供电，和给电池充电。为了保证USB对外供电的电压，充电电流按照输入电压调节，保证电压不低于4.6V
-
-
-Detailed Introduction
+Detaillierte Einführung
 ------------------------------------
 
 **STAT LED**
 
-The STAT LED is the status indicator for the ESP32 S2.
+Die STAT LED ist die Statusanzeige für den ESP32 S2.
 
-* Off: ESP32 S2 is powered off.
-* Slow blinking: ESP32 S2 is powered on, but Wi-Fi is not connected.
-* Steady on: ESP32 S2 is powered on and Wi-Fi is connected.
+* Aus: Der ESP32 S2 ist ausgeschaltet.
+* Langsames Blinken: Der ESP32 S2 ist eingeschaltet, aber das WLAN ist nicht verbunden.
+* Dauerhaft eingeschaltet: Der ESP32 S2 ist eingeschaltet und das WLAN ist verbunden.
 
-.. note:: The so-called "ESP32 S2 powered off" state refers to the situation when the USB Type C power is connected. In this state, the ESP32 S2 is technically "powered off" but not completely shut down. The power LED still requires the ESP32 S2 to control its illumination, and some functions may remain operational. However, when you unplug the USB Type C power, the ESP32 S2 will shut down completely.
+.. note:: Der sogenannte "ESP32 S2 ausgeschaltet" Zustand bezieht sich auf die Situation, wenn die USB Type C-Stromversorgung angeschlossen ist. In diesem Zustand ist der ESP32 S2 technisch "ausgeschaltet", aber nicht vollständig heruntergefahren. Die Strom-LED benötigt immer noch den ESP32 S2, um ihre Beleuchtung zu steuern, und einige Funktionen können weiterhin betriebsbereit sein. Wenn Sie jedoch die USB Type C-Stromversorgung trennen, wird der ESP32 S2 vollständig heruntergefahren.
 
-**Switch Power Path**
+**Umschaltung des Strompfads**
 
-PiPower Pro integrates a power path function that automatically switches power paths to ensure maximum output protection.
+Das PiPower Pro integriert eine Strompfad-Funktion, die automatisch die Strompfade umschaltet, um maximalen Ausgangsschutz zu gewährleisten.
 
-1. When external power is connected, the 5V output is directly supplied through the external USB Type C and can be turned off using the switch. The external power source charges the battery with as much current as possible (see charging current) while ensuring the input voltage is greater than 4.6V.
-2. In the moment of power disconnection, the system automatically switches to battery power output with seamless transition, ensuring the system can function properly during power interruptions.
-3. If the external power is below 4.6V, the system automatically switches to battery backup power to prevent external devices from losing power.
+1. Wenn eine externe Stromversorgung angeschlossen ist, wird die 5V-Ausgabe direkt über den externen USB Typ C geliefert und kann über den Schalter ausgeschaltet werden. Die externe Stromquelle lädt den Akku mit so viel Strom wie möglich (siehe Lade-Stromstärke), während sichergestellt wird, dass die Eingangsspannung größer als 4,6V ist.
+2. Im Moment der Stromtrennung schaltet das System automatisch nahtlos auf Akkustrom um und stellt sicher, dass das System bei Stromausfällen ordnungsgemäß funktionieren kann.
+3. Wenn die externe Stromversorgung unter 4,6V liegt, schaltet das System automatisch auf die Akku-Backup-Stromversorgung um, um zu verhindern, dass externe Geräte den Strom verlieren.
 
-.. list-table:: Output Power Logic
+.. list-table:: Logik der Ausgangsleistung
     :widths: 25 50 50
     :header-rows: 1
 
-    * - Switch 
-      - External Power 
-      - Output Status
-    * - On 
-      - Plugged in 
-      - External Power
-    * - On 
-      - Unplugged or voltage below 4.6V
-      - Battery Power
-    * - Off 
-      - Plugged in 
-      - Off
-    * - Off 
-      - Unplugged or voltage below 4.6V
-      - Off
+    * - Schalter 
+      - Externe Stromversorgung 
+      - Ausgangsstatus
+    * - An 
+      - Angeschlossen 
+      - Externe Stromversorgung
+    * - An 
+      - Nicht angeschlossen oder Spannung unter 4,6V
+      - Akku-Stromversorgung
+    * - Aus 
+      - Angeschlossen 
+      - Aus
+    * - Aus 
+      - Nicht angeschlossen oder Spannung unter 4,6V
+      - Aus
 
+**Ladeleistung**
 
-**Charging Power**
+Im eingeschalteten Zustand wird der Ladestrom automatisch anhand der Eingangsspannung angepasst.
 
-Under the power-on state, the charging current will automatically adjust based on the input voltage.
-
-.. list-table:: Charging Current Logic
+.. list-table:: Logik des Ladestroms
     :widths: 25 50
     :header-rows: 1
 
-    * - Switch 
-      - Charging Current
-    * - On 
-      - Adjusted based on input voltage
-    * - Off 
+    * - Schalter 
+      - Ladestrom
+    * - An 
+      - Anhand der Eingangsspannung angepasst
+    * - Aus 
       - 2A
 
-1. When the switch is in the "Off" state, PiPower Pro does not supply power externally, and the charging current reaches a maximum of 2A, allowing for fast charging. The charging time from 0% to 100% is approximately 2 hours and 10 minutes.
-2. In the "On" state, since PiPower Pro needs to supply power externally, the external USB also needs to provide power to the battery. To ensure the voltage of the USB power supply remains stable, the charging current is adjusted based on the input voltage, ensuring the voltage stays above 4.6V.
+1. Wenn der Schalter auf "Aus" steht, liefert das PiPower Pro keinen externen Strom, und der Ladestrom erreicht ein Maximum von 2A, was ein schnelles Laden ermöglicht. Die Ladezeit von 0% auf 100% beträgt ungefähr 2 Stunden und 10 Minuten.
+2. Im "An"-Zustand, da das PiPower Pro externen Strom liefern muss, muss der externe USB auch Strom für den Akku liefern. Um sicherzustellen, dass die Spannung der USB-Stromversorgung stabil bleibt, wird der Ladestrom anhand der Eingangsspannung angepasst, wodurch die Spannung über 4,6V bleibt.
 
 
 
 
-**Over-discharge Protection**
 
-When the single battery voltage is below 3V, the battery protection activates and the battery is no longer discharged.
 
-When the battery is unplugged, due to the mechanism of the on-board over-discharge protection circuit, the voltage will be considered too low, thus activating the protection circuit; when you replug the battery into the PiPower, the battery will not work properly, at this time, you need to plug the Type C cable into the charging port to turn off the protection circuit, and the battery can be used normally.
+**Tiefentladeschutz**
 
-**Overcharge Protection**
+Wenn die Spannung einer einzelnen Batterie unter 3V fällt, wird der Batterieschutz aktiviert und die Batterie nicht weiter entladen.
 
-Charging ends when the total battery voltage reaches 8.4V.
+Wenn die Batterie ausgesteckt wird, aktiviert der an Bord befindliche Tiefentladeschutzschaltkreis aufgrund seiner Mechanik den Schutz, da die Spannung als zu niedrig betrachtet wird. Wenn Sie die Batterie wieder an das PiPower anschließen, funktioniert die Batterie nicht ordnungsgemäß. In diesem Fall müssen Sie das Type C-Kabel in den Ladeanschluss stecken, um den Schutzschaltkreis auszuschalten, und die Batterie kann dann normal verwendet werden.
 
-**Charge Balance**
+**Überladeschutz**
 
-When the voltages of the two batteries are not equal, the charging current of the two batteries is automatically adjusted to balance the two batteries.
+Das Laden endet, wenn die Gesamtspannung der Batterie 8,4V erreicht.
 
-When a single battery exceeds 4.2V, the voltage divider resistor channel conducts and the battery charging current is reduced or even discharged. 
+**Ladeausgleich**
 
-**Battery**
+Wenn die Spannungen der beiden Batterien nicht gleich sind, wird der Ladestrom der beiden Batterien automatisch angepasst, um die beiden Batterien auszugleichen.
 
-The product comes with two 3.7V 18650 lithium-ion batteries in series, featuring an XH2.54 3P connector, with a nominal capacity of 2000mAh.
+Wenn eine einzelne Batterie 4,2V übersteigt, leitet der Spannungsteiler-Widerstandskanal und der Ladestrom der Batterie wird verringert oder sogar entladen.
 
-* Composition: Li-ion (Lithium-ion)
-* Capacity: 2000mAh, 14.8Wh
-* Weight: 90.8g
-* Cells: 2
-* Connector: XH2.54 3P
-* Overcharge Protection Voltage: 4.2V per cell
-* Over-discharge Protection: 3V
+**Batterie**
 
-**External Battery**
+Das Produkt wird mit zwei in Reihe geschalteten 3,7V 18650 Lithium-Ionen-Batterien geliefert, die über einen XH2.54 3P-Anschluss verfügen und eine Nennkapazität von 2000mAh haben.
+
+* Zusammensetzung: Li-ion (Lithium-Ion)
+* Kapazität: 2000mAh, 14,8Wh
+* Gewicht: 90,8g
+* Zellen: 2
+* Anschluss: XH2.54 3P
+* Überladeschutzspannung: 4,2V pro Zelle
+* Tiefentladeschutz: 3V
+
+**Externe Batterie**
 
 .. image:: img/ex_btr0.png
 
-You can connect your own battery using the Screw Terminal. The device only supports two 3.7V lithium-ion or lithium-polymer batteries. It's preferable for the batteries to have a protection board and ensure an output of more than 15W.
+Sie können Ihre eigene Batterie über den Schraubanschluss anschließen. Das Gerät unterstützt nur zwei 3,7V Lithium-Ionen- oder Lithium-Polymer-Batterien. Es ist vorzuziehen, dass die Batterien über eine Schutzplatine verfügen und eine Ausgabe von mehr als 15W sicherstellen.
 
-.. warning:: Do not connect the external battery and the included battery at the same time!
+.. warning:: Schließen Sie nicht gleichzeitig die externe Batterie und die im Lieferumfang enthaltene Batterie an!
 
 .. image:: img/ex_btr.png
 
+**Temperatur**
 
-
-**Temperature**
-
-When the output power reaches the maximum nominal 5V/3A, the temperature of DC-DC buck chip U1 will rise to about 70-80 degrees Celsius, 
-so be careful not to touch it to prevent burns and keep ventilation. When the temperature reaches the DC-DC protection temperature of 75 degrees Celsius, 
-the DC-DC will shut down to prevent overheating damage.
+Wenn die Ausgangsleistung den maximalen Nennwert von 5V/3A erreicht, steigt die Temperatur des DC-DC-Abwärtswandlers U1 auf etwa 70-80 Grad Celsius. Seien Sie also vorsichtig und berühren Sie ihn nicht, um Verbrennungen zu vermeiden und für Belüftung zu sorgen. Wenn die Temperatur die DC-DC-Schutztemperatur von 75 Grad Celsius erreicht, schaltet sich der DC-DC ab, um Überhitzungsschäden zu vermeiden.
 
 .. image:: img/temp_c.png
 
 **D8 LED**
 
-The D8 LED is a charging status indicator provided by the IP2326 charging chip. 
-Originally, this light was designed to indicate both the charging status and any abnormalities 
-with the battery. However, it can only detect if there's current flow in the charging output. 
-This output current can be routed through a DC-DC converter to output 5V. 
-In simpler terms, when there's insufficient input power, the battery will supplement the power supply, 
-and during this, the LED remains steadily lit, which can be misleading. 
-However, the LED was retained as it can indicate if the battery is functioning 
-normally (the LED will blink if the battery isn't inserted).
+Die D8 LED ist eine Ladezustandsanzeige, die vom IP2326-Ladechip bereitgestellt wird. Ursprünglich wurde diese Leuchte entwickelt, um sowohl den Ladezustand als auch eventuelle Anomalien der Batterie anzuzeigen. Sie kann jedoch nur erkennen, ob im Ladeausgang ein Stromfluss vorhanden ist. Dieser Ausgangsstrom kann über einen DC-DC-Wandler umgeleitet werden, um 5V auszugeben. Einfach ausgedrückt: Wenn nicht genügend Eingangsleistung vorhanden ist, ergänzt die Batterie die Stromversorgung, und währenddessen bleibt die LED ständig eingeschaltet, was irreführend sein kann. Die LED wurde jedoch beibehalten, da sie anzeigen kann, ob die Batterie normal funktioniert (die LED blinkt, wenn die Batterie nicht eingesetzt ist).
 
-
-Battery Indicators
+Batterieanzeigen
 --------------------------
 
-The relationship between the battery indicators and voltage is as follows:
+Das Verhältnis zwischen den Batterieanzeigen und der Spannung ist wie folgt:
 
-* 4 LEDs all on: voltage > 7.7V
-* 3 LEDs on: voltage > 7.2V
-* 2 LEDs on: voltage >6.7V
-* 1 LED on: voltage > 6.4V
-* 4 LEDs all off: voltage <6V，at this time，batteries need to be charged.
+* 4 LEDs alle eingeschaltet: Spannung > 7,7V
+* 3 LEDs eingeschaltet: Spannung > 7,2V
+* 2 LEDs eingeschaltet: Spannung > 6,7V
+* 1 LED eingeschaltet: Spannung > 6,4V
+* 4 LEDs alle ausgeschaltet: Spannung <6V, zu diesem Zeitpunkt müssen die Batterien geladen werden.
 
-
-
-.. About IO Pins
-.. -----------------
-
-.. .. image:: img/io_pin.png
-..     :width: 500
-..     :align: center
-
-.. In order to meet the DIY needs of customers, multiple signal pins are provided on the PiPower, but they are not soldered by default.
-
-.. * **GND**: Ground input
-.. * **BT_LV**: Get the battery voltage pin. The voltage of this pin is equal to 1/3 of the battery voltage.
-.. * **IN_DT**: Input detect pin. Used to determine if there is USB power input, if so, this pin outputs high.
-.. * **CHG**: Charging status indication pin. This pin is high when charging.
-.. * **LO_DT**: Battery low voltage status pin. In normal state, this pin is low. When low battery voltage is detected, this pin is high.
-.. * **EN:** Switch signal pin. the EN pin can be connected to an external switch, put the pin to ground, the PiPower is off. The external switch can not use self-recovery button or key, etc. The EN pin is only effective when the on-board switch is turned on.
-.. * **GND**: Ground input
-.. * **LED**: Power indicator pin. Output 5V at power on, need to add current limiting resistor in the middle when connect an external LED.
-.. * **GND**: Ground input
-
-.. About Battery
-.. ----------------------
-
-
-.. .. .. image:: img/2battery.jpg
-.. ..     :width: 300
-.. ..     :align: center
-
-.. * **VCC**: Battery positive terminal, here there are 1 set of VCC and GND is to increase the current and reduce the resistance.
-.. * **Middle**: To balance the voltage between the two cells and thus protect the battery.
-.. * **GND**: Negative battery terminal.
-
-
-.. This is a custom battery pack made by SunFounder consisting of two 3.7V 18650 batteries 
-.. with a capacity of 2200mAh. The connector is PH2.0-3P, 
-.. which can be charged directly after being inserted into the PiPower.

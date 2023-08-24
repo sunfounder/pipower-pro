@@ -1,63 +1,58 @@
-Add PiPower Pro in Home Assistant
+PiPower Pro in Home Assistant hinzufügen
 ==============================================
 
-**Step 1**
+**Schritt 1**
 
-Install the battery.
+Setzen Sie die Batterie ein.
 
-**Step 2**
+**Schritt 2**
 
-Connect the USB-C charger until all four battery indicators are 
-lit (this means the battery is fully charged). 
-Press the power button to turn it on.
+Verbinden Sie das USB-C-Ladegerät, bis alle vier Batterieanzeigen leuchten (dies bedeutet, dass die Batterie vollständig geladen ist). Drücken Sie den Ein-/Ausschalter, um das Gerät einzuschalten.
 
-**Step 3**
+**Schritt 3**
 
-Configure the network for PiPower Pro. 
-Search for Wi-Fi on your phone (or other device) 
-and connect to ``PiPower Pro Fallback Hotspot``. The password is ``123456``.
+Konfigurieren Sie das Netzwerk für PiPower Pro. Suchen Sie mit Ihrem Handy (oder einem anderen Gerät) nach Wi-Fi und verbinden Sie sich mit dem ``PiPower Pro Fallback Hotspot``. Das Passwort lautet ``123456``.
 
 .. image:: img/pipw_host.jpg
 
-**Step 4**
+**Schritt 4**
 
-Once connected, a configuration page will pop up on your phone. Complete the Wi-Fi configuration for PiPower here.
+Nachdem Sie verbunden sind, wird auf Ihrem Handy eine Konfigurationsseite angezeigt. Vervollständigen Sie hier die Wi-Fi-Konfiguration für PiPower.
 
 .. image:: img/pipw_wifi.jpg
 
-If the configuration page doesn't automatically pop up, you can open a browser and visit `pipower-pro.local`.
+Wenn die Konfigurationsseite nicht automatisch angezeigt wird, können Sie einen Browser öffnen und ``pipower-pro.local`` besuchen.
 
-**Step 5**
+**Schritt 5**
 
-Open your Home Assistant page, select Configuration from the left sidebar, then select Devices and Services.
+Öffnen Sie Ihre Home Assistant Seite, wählen Sie Konfiguration in der linken Seitenleiste und dann Geräte und Dienste.
 
 .. image:: img/sp230803_162403.png
 
-**Step 6**
+**Schritt 6**
 
-Click on ``+ ADD INTEGRATION`` at the bottom right.
+Klicken Sie unten rechts auf ``+ ADD INTEGRATION``.
 
 .. image:: img/sp230803_162631.png
 
-**Step 7**
+**Schritt 7**
 
-Select ``ESPHome``.
+Wählen Sie ``ESPHome`` aus.
 
 .. image:: img/sp230803_162801.png
 
-**Step 8**
+**Schritt 8**
 
-Enter ``pipower-pro.local`` and submit.
+Geben Sie ``pipower-pro.local`` ein und bestätigen Sie.
 
 .. image:: img/sp230803_162936.png
 
-**Step 9**
+**Schritt 9**
 
-Choose an area for it and complete the setup.
+Wählen Sie einen Bereich dafür aus und schließen Sie die Einrichtung ab.
 
 .. image:: img/sp230803_165117.png
 
-**Step 10**
+**Schritt 10**
 
-You have now successfully added PiPower Pro. You can add the PiPower Pro configurations you need on the dashboard.
-
+Sie haben PiPower Pro erfolgreich hinzugefügt. Sie können die gewünschten PiPower Pro Konfigurationen im Dashboard hinzufügen.
