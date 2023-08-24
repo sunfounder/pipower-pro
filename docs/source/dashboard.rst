@@ -1,14 +1,14 @@
-Configure Dashboard
+ダッシュボードの設定
 ------------------------------
 
-1. On the Home Assistant page, click **Overview** on the left sidebar, which leads you to the control page.
+1. Home Assistantのページで、左のサイドバーにある **Overview** をクリックし、コントロールページに移動します。
 
     .. image:: img/sp230803_182537.png
 
-2. Click the menu button, then select **Edit Dashboard**.
+2. メニューボタンをクリックして、 **Edit Dashboard** を選択します。
 
     .. image:: img/sp230803_182632.png
 
-3. Click on the bottom right to add a card, select the desired card from the options, configure it as needed, then save.
+3. 右下にあるボタンをクリックしてカードを追加し、オプションから希望のカードを選択し、必要に応じて設定を行い、保存します。
 
     .. image:: img/sp230803_182835.png

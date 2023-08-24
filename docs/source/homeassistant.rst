@@ -1,63 +1,60 @@
-Add PiPower Pro in Home Assistant
+Home AssistantにPiPower Proを追加する
 ==============================================
 
-**Step 1**
+**ステップ1**
 
-Install the battery.
+バッテリーを取り付けます。
 
-**Step 2**
+**ステップ2**
 
-Connect the USB-C charger until all four battery indicators are 
-lit (this means the battery is fully charged). 
-Press the power button to turn it on.
+全てのバッテリーインジケータが点灯するまでUSB-C充電器を接続します（これはバッテリーが完全に充電されていることを意味します）。
+電源ボタンを押して電源を入れます。
 
-**Step 3**
+**ステップ3**
 
-Configure the network for PiPower Pro. 
-Search for Wi-Fi on your phone (or other device) 
-and connect to ``PiPower Pro Fallback Hotspot``. The password is ``123456``.
+PiPower Proのネットワークを設定します。
+携帯電話（または他のデバイス）でWi-Fiを検索し、 ``PiPower Pro Fallback Hotspot`` に接続します。パスワードは ``123456`` です。
 
 .. image:: img/pipw_host.jpg
 
-**Step 4**
+**ステップ4**
 
-Once connected, a configuration page will pop up on your phone. Complete the Wi-Fi configuration for PiPower here.
+接続が完了すると、携帯電話に設定ページが表示されます。ここでPiPowerのWi-Fi設定を完了します。
 
 .. image:: img/pipw_wifi.jpg
 
-If the configuration page doesn't automatically pop up, you can open a browser and visit `pipower-pro.local`.
+設定ページが自動的に表示されない場合は、ブラウザを開いて **pipower-pro.local** を訪問してください。
 
-**Step 5**
+**ステップ5**
 
-Open your Home Assistant page, select Configuration from the left sidebar, then select Devices and Services.
+Home Assistantページを開き、左のサイドバーから設定を選択し、デバイスとサービスを選択します。
 
 .. image:: img/sp230803_162403.png
 
-**Step 6**
+**ステップ6**
 
-Click on ``+ ADD INTEGRATION`` at the bottom right.
+右下の ``+ ADD INTEGRATION`` をクリックします。
 
 .. image:: img/sp230803_162631.png
 
-**Step 7**
+**ステップ7**
 
-Select ``ESPHome``.
+``ESPHome`` を選択します。
 
 .. image:: img/sp230803_162801.png
 
-**Step 8**
+**ステップ8**
 
-Enter ``pipower-pro.local`` and submit.
+``pipower-pro.local`` を入力し、送信します。
 
 .. image:: img/sp230803_162936.png
 
-**Step 9**
+**ステップ9**
 
-Choose an area for it and complete the setup.
+エリアを選択し、設定を完了します。
 
 .. image:: img/sp230803_165117.png
 
-**Step 10**
+**ステップ10**
 
-You have now successfully added PiPower Pro. You can add the PiPower Pro configurations you need on the dashboard.
-
+PiPower Proを正常に追加しました。ダッシュボード上で必要なPiPower Proの設定を追加することができます。

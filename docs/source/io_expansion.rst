@@ -1,18 +1,16 @@
-
-
-IO Expansion
+IO拡張
 -----------------
 
-J4 is used for expansion. The IO comes from ESP32 S2.
+J4は拡張用に使用されます。このIOはESP32 S2から提供されています。
 
-.. list-table:: IO Expansion
+.. list-table:: IO拡張
     :widths: 50 25 25 50
     :header-rows: 1
 
-    * - Functions
-      - Pin
-      - Pin
-      - Functions
+    * - 機能
+      - ピン
+      - ピン
+      - 機能
     * - 5V
       - 5V
       - 3V3

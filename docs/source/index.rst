@@ -1,42 +1,40 @@
-PiPower - Raspberry Pi UPS with Battery
+PiPower - Raspberry Pi用のUPSおよびバッテリー
 =============================================
 
 .. image:: img/media1.jpg
     :width: 600
 
-**What a UPS Does?**
+**UPSとは何か？**
 
-If your Raspberry Pi project requires constant power, relying only on the main power system is not a viable option. Depending on your location, power drops and surges may occur frequently and often last for hours. Any power fluctuations can damage your Raspberry Pi, and a power outage will immediately shut it down. Consequently, it will not shut down safely, which can result in all data on the SD card being lost, increasing the chances of it being destroyed.
+Raspberry Piのプロジェクトが常時電源を必要とする場合、主電源のみに依存するのは適切ではありません。地域によっては、頻繁に電源が落ちたり、サージが発生したりすることがあります。電源の変動はRaspberry Piを破損させる可能性があり、電源が途絶えると、Raspberry Piはすぐにシャットダウンします。したがって、安全にシャットダウンすることができず、SDカード上の全てのデータが失われるリスクが高まり、破壊される可能性が増加します。
 
-Therefore, the use of an uninterruptible power supply (UPS) is recommended.
+そのため、無停電電源装置（UPS）の使用が推奨されます。
 
-With a UPS, if there is a power interruption from the mains (interruption = power outage), the battery or other power source will take over and continue to power the device without shutting it down. A UPS is often considered an emergency power source. After the main power source is repaired, the UPS will recharge and be ready to handle the next disaster.
+UPSを使用すると、メイン電源からの電源遮断が発生した場合（遮断＝停電）、バッテリーや他の電源が引き継いでデバイスに電力を供給し続け、シャットダウンすることなく動作します。UPSは、非常電源として考えることが多いです。主電源が復旧した後、UPSは再充電され、次のトラブルに備えることができます。
 
-**About PiPower**
+**PiPowerについて**
 
-That's why we designed PiPower in the first place. PiPower can be used as a second power source for the Raspberry Pi. A USB-C mains power supply plugged into the PiPower will directly power the Raspberry Pi and charge the battery at low current. PiPower can seamlessly power up a Raspberry Pi in the event of a power outage or disconnection of USB-C mains power.
+これが、最初にPiPowerを設計した理由です。PiPowerは、Raspberry Piの第二の電源として使用できます。PiPowerにUSB-Cメイン電源アダプタを接続すると、Raspberry Piに直接電力を供給し、バッテリーを低電流で充電します。停電やUSB-Cメイン電源の切断が発生した場合、PiPowerはRaspberry Piをシームレスに電源供給できます。
 
-PiPower can output 5V/3A power supply to meet various Raspberry Pi usage situation. 
-It has 4 power indicators; each indicator represents 25% of the power, and is equipped with a power switch to turn on/off the power of the Raspberry Pi without plugging or unplugging the power cord.
+PiPowerは、5V/3Aの電源供給を出力でき、様々なRaspberry Piの使用状況に対応しています。
+4つの電源インジケータがあり、各インジケータは電源の25%を示し、Raspberry Piの電源を入/切するスイッチも装備しています。
 
 .. warning::
-    When you put the battery in for the first time or when the battery is unplugged and put in again, the battery will not work properly, at this time, you need to plug the Type C cable into the charging port to turn off the protection circuit, and the battery can be used normally.
+    バッテリーを初めて入れるときや、バッテリーを取り外して再度入れるときには、正常に動作しない場合があります。このような場合、Type Cケーブルを充電ポートに差し込んで、保護回路をオフにする必要があります。その後、バッテリーは正常に使用できます。
 
+**PiPower Proについて** 
 
-**About PiPower Pro** 
+PiPower Proは、PiPowerを基盤に、ESP32 S2モジュールを統合してモジュールのバッテリー電圧や電流状態、入出力電圧、電流をリアルタイムで監視できるようにしました。また、充電電流のインテリジェントな調整や、入力電源とバッテリー電源の間でのシームレスな切り替えを特長としており、連続した電源出力が確保されます。
 
-PiPower Pro builds upon PiPower, integrating an ESP32 S2 module that enables real-time monitoring of the module's battery voltage and current status, input/output voltage and current. It also features intelligent charging current adjustment and seamless switching between input and battery power, ensuring uninterrupted power output.
+Home Assistantと統合することで、ユーザーはすべてのパラメータデータに簡単にアクセスし、スマートデバイスのシナリオの自動化を設定できます。
 
-When integrated with Home Assistant, users can easily access and review all parameter data, as well as configure automation for smart device scenarios.
-
-Additionally, PiPower Pro offers external IO interfaces for controlling the on/off state of sub-devices. With its open-source ESPHome configuration, users can customize IO functionalities and expand the system with more sensors.
-
-
+さらに、PiPower Proは、サブデバイスのオン/オフ状態を制御するための外部IOインターフェースを提供しています。オープンソースのESPHome設定を利用して、ユーザーはIO機能をカスタマイズし、さらに多くのセンサーをシステムに追加することができます。
 
 .. toctree::
-    About PiPower <self>
+    PiPowerについて <self>
     components
     assemble
     features
     start
     faq
+

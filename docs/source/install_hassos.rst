@@ -1,44 +1,39 @@
-Install the HassOS
+HassOSのインストール
 --------------------------
 
-This section will guide you in installing the Home Assistant operating system on your Raspberry Pi. 
-Please note that this process will result in the loss of all existing content on your Raspberry Pi system. 
-It is important to backup your data before proceeding.
+このセクションでは、Raspberry PiにHome Assistantオペレーティングシステムをインストールする手順を案内します。
+Raspberry Piのシステムにある既存の内容がすべて失われることに注意してください。
+手順を進める前にデータのバックアップが重要です。
 
-**Step 1**
+**ステップ1**
 
-Raspberry Pi have developed a graphical SD card writing tool that works
-on Mac OS, Ubuntu 18.04 and Windows, and is the easiest option for most
-users as it will download the image and install it automatically to the
-SD card.
+Raspberry Piは、Mac OS、Ubuntu 18.04、およびWindowsで動作するグラフィカルなSDカードライティングツールを開発しています。これは、イメージをダウンロードしてSDカードに自動でインストールするため、多くのユーザーにとって最も簡単な選択です。
 
-Visit the download page: https://www.raspberrypi.org/software/. Click on
-the link for the **Raspberry Pi Imager** that matches your operating system,
-when the download finishes, click it to launch the installer.
+ダウンロードページ https://www.raspberrypi.org/software/ にアクセスします。ご利用のオペレーティングシステムに対応する **Raspberry Pi Imager** のリンクをクリックし、ダウンロードが完了したらインストーラーを起動します。
 
 .. image:: img/image11.png
     :align: center
 
-**Step 2**
+**ステップ2**
 
-When you launch the installer, your operating system may try to block
-you from running it. For example, on Windows I receive the following
-message:
+インストーラーを起動すると、オペレーティングシステムが実行をブロックしようとする場合があります。例として、Windowsでは次のようなメッセージが表示される場合があります。
 
-If this pops up, click on **More info** and then **Run anyway**, then
-follow the instructions to install the Raspberry Pi Imager.
+このポップアップが表示された場合、 **More info** をクリックしてから **Run anyway** をクリックし、Raspberry Pi Imagerのインストール手順に従います。
 
 .. image:: img/image12.png
     :align: center
 
-**Step 3**
+.. raw:: html
+    
+    <br/>
 
-Insert your SD card into the computer or laptop SD card slot.
+**ステップ3**
 
-**Step 4**
+SDカードをコンピューターやラップトップのSDカードスロットに挿入します。
 
-In the Raspberry Pi Imager, select the OS that you want to install and
-the SD card you would like to install it on.
+**ステップ4**
+
+Raspberry Pi Imagerで、インストールしたいOSとインストールするSDカードを選択します。
 
 .. image:: img/sp230627_181014.png
 
@@ -48,66 +43,64 @@ the SD card you would like to install it on.
 
 .. image:: img/sp230627_181306.png
 
-**Step 5**
+**ステップ5**
 
-Select the SD card you are using.
+使用するSDカードを選択します。
 
 .. image:: img/image14.png
     :align: center
 
+.. raw:: html
+    
+    <br/>
 
-**Step 7**
+**ステップ6**
 
-Click the **WRITE** button.
-
+**WRITE** ボタンをクリックします。
 
 .. image:: img/sp230627_181444.png
 
+**ステップ7**
 
-**Step 8**
-
-If your SD card currently has any files on it, you may wish to back up
-these files first to prevent you from permanently losing them. If there
-is no file to be backed up, click **Yes**.
+SDカードにファイルがある場合は、それらのファイルをバックアップして永久に失うことを防ぎます。バックアップするファイルがない場合は、 **Yes** をクリックします。
 
 .. image:: img/image18.png
     :align: center
 
+**ステップ8**
 
-**Step 9**
-
-After waiting for a period of time, the following window will appear to
-represent the completion of writing.
+しばらく待った後、書き込みが完了したことを示すウィンドウが表示されます。
 
 .. image:: img/sp230628_161104.png
     :align: center
 
-**Step 10**
+.. raw:: html
+    
+    <br/>
 
-Next, we will configure WiFi for Pironman.
+**ステップ9**
 
-.. note:: If you intend to use a wired connection for network access, you can skip this step.
+次に、PironmanのWiFiを設定します。
 
+.. note:: 有線接続を使用してネットワークにアクセスする予定の場合、このステップはスキップできます。
 
-Open File Explorer and access the SD card named ``Hassio-boot``
+ファイルエクスプローラーを開き、 ``Hassio-boot`` という名前のSDカードにアクセスします。
 
 .. image:: img/sp230628_095957.png
 
-Create a new folder named ``CONFIG`` in the root partition.
+ルートパーティションに ``CONFIG`` という新しいフォルダを作成します。
 
 .. image:: img/sp230628_100453.png
 
-Create a folder named ``network`` inside the ``CONFIG`` folder.
+``CONFIG`` フォルダ内に ``network`` というフォルダを作成します。
 
 .. image:: img/sp230628_113426.png
 
-
-Inside the ``network`` folder, create a new text file named ``my-network`` (without extension).
+``network`` フォルダ内に、拡張子なしで ``my-network`` という新しいテキストファイルを作成します。
 
 .. image:: img/sp230628_113506.png
 
-
-In the ``my-network`` file, write the following text, replacing ``MY_SSID`` and ``MY_WLAN_SECRET_KEY`` with your own network's SSID and password:
+``my-network`` ファイルに次のテキストを書き込み、 ``MY_SSID`` と ``MY_WLAN_SECRET_KEY`` をご自身のネットワークのSSIDとパスワードに置き換えます：
 
 .. code-block::
 
@@ -134,29 +127,28 @@ In the ``my-network`` file, write the following text, replacing ``MY_SSID`` and 
     addr-gen-mode=stable-privacy
     method=auto
 
-Save and exit the file.
+ファイルを保存して閉じます。
 
-**Step 11**
+**ステップ10**
 
-Remove the microSD card from your computer and insert it into the Raspberry Pi. Then, connect the power (and Ethernet cable if needed).
+microSDカードをコンピュータから取り出し、Raspberry Piに挿入します。その後、電源（および必要な場合はイーサネットケーブル）を接続します。
 
-Go back to your computer and navigate to ``homeassistant.local:8123`` , 
-or if that doesn't work, you can find the IP address by checking your router.
+コンピュータに戻って ``homeassistant.local:8123`` に移動します。
+それが機能しない場合は、ルーターでIPアドレスを確認できます。
 
-During the first use of Home Assistant, you may need to wait for some time as it performs initial setup.
+Home Assistantを初めて使用する際、初期設定を実行するためにしばらく待つ必要がある場合があります。
 
 .. image:: img/sp230628_141749.png
 
-**Step 12**
+**ステップ11**
 
-Next, you will be prompted to create the first account.
+次に、最初のアカウントの作成を促されます。
 
 .. image:: img/sp230627_135949.png
 
-The system will prompt you to install some detected devices, but for now, you can skip this by clicking FINISH.
+システムは、検出されたデバイスのインストールを促しますが、今のところ、FINISHをクリックしてこれをスキップできます。
 
 .. image:: img/sp230627_141016.png
 
-Now you've set up Home Assistant.
-
+これで、Home Assistantのセットアップが完了しました。
 

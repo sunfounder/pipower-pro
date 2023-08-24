@@ -1,69 +1,46 @@
 
 
-
-Coulomb Counter (Beta)
+クーロンカウンタ（ベータ版）
 ----------------------------------
 
-The Coulomb Counter algorithm can improve the accuracy of battery capacity 
-calculation, but it is currently in the beta stage and may result in serious 
-inaccuracies. Please use it with caution.
+クーロンカウンタのアルゴリズムはバッテリー容量の計算の精度を向上させることができますが、現在はベータ段階にあり、大きな誤差が生じる可能性があります。十分な注意を払って使用してください。
 
-**Enable the Coulomb Counter**
+**クーロンカウンタを有効にする**
 
-1. Go to the Home Assistant page and click on "Developer Tools" on the left sidebar.
-2. In the Developer Tools page, select the "Services" tab.
-3. In the list of services, choose ``ESPHome: pipower_pro_enable_coulomb_count_beta``.
-4. Turn on the switch for ``enable_coulomb_count_beta``.
-5. Click the **Call Service** button below.
-6. You can check the currently selected battery capacity algorithm in the entity ``sensor.pipower_pro_battery_capacity_algorithm``.
+1. Home Assistantのページに移動し、左のサイドバーで「Developer Tools」をクリックします。
+2. Developer Toolsのページで、「Services」タブを選択します。
+3. サービスのリストから、 ``ESPHome: pipower_pro_enable_coulomb_count_beta`` を選択します。
+4. ``enable_coulomb_count_beta`` のスイッチをオンにします。
+5. 下の「**Call Service**」ボタンをクリックします。
+6. エンティティ ``sensor.pipower_pro_battery_capacity_algorithm`` で現在選択されているバッテリー容量のアルゴリズムを確認できます。
 
-**Algorithm**
+**アルゴリズム**
 
-The Coulomb Counter algorithm calculates the energy by integrating the current and voltage measurements of the battery every second.
+クーロンカウンタのアルゴリズムは、毎秒バッテリーの電流と電圧の測定を積分してエネルギーを計算します。
 
 ``Capacity += Voltage * Current``
 
-**Matching**
+**マッチング**
 
-The capacity calculated by this integration is only 
-the charge/discharge energy from the current moment. 
-To associate it with the actual capacity of the battery, 
-a matching process is needed.
-The matching method here is simple. 
-PiPower Pro's default battery capacity is the nominal capacity of the battery, 
-which is 2000mAh. The actual battery capacity will be less than this value. 
-As long as the battery is charged, 
-the capacity will be set to the maximum of 2000mAh 
-(can be changed using the service ``set_battery_factory_capacity``), 
-so when the battery is fully charged, 
-the capacity value matches the actual battery capacity of 2000mAh, 
-and the integration calculation value matches the actual battery capacity value.
+この積分によって計算される容量は、現在の時点からの充放電エネルギーのみです。実際のバッテリー容量と関連付けるためのマッチングプロセスが必要です。ここでのマッチング方法はシンプルです。PiPower Proのデフォルトのバッテリー容量はバッテリーの名目容量、すなわち2000mAhです。実際のバッテリー容量はこの値よりも小さいでしょう。バッテリーが充電される限り、容量は最大2000mAh（ ``set_battery_factory_capacity`` のサービスを使用して変更可能）に設定されるため、バッテリーが完全に充電されたとき、容量値は実際のバッテリー容量の2000mAhと一致し、積分計算値も実際のバッテリー容量値と一致します。
 
-**Auto Calibration**
+**自動キャリブレーション**
 
-Integration can accumulate errors, and the battery capacity will decrease as the battery is used over time, which may not reach the nominal 2000mAh capacity.
-Therefore, some calibration methods need to be used to calibrate the battery capacity.
+積分は誤差を蓄積する可能性があり、バッテリーが時間とともに使用されるとバッテリー容量は減少し、名目2000mAh容量に達しないかもしれません。したがって、バッテリー容量をキャリブレートするためのいくつかのキャリブレーション方法を使用する必要があります。
 
-Here, the Compensated End of Discharge Voltage (CEDV) calibration method is used.
-The principle of the CEDV calibration method is that the voltage at the end of the battery discharge is relatively accurate, and the voltage curve at this time is also the steepest. Using this voltage as a calibration point is more appropriate.
-So here we set 3 EDV points: edv2 (7%), edv1 (3%), and edv0 (0%).
+ここでは、補償放電終了電圧（CEDV）キャリブレーション方法を使用します。CEDVキャリブレーション方法の原理は、放電終了時の電圧が比較的正確であり、この時の電圧曲線も最も急であることです。この電圧をキャリブレーションポイントとして使用するのは適切です。したがって、3つのEDVポイントを設定します：edv2（7％）、edv1（3％）、およびedv0（0％）。
 
-After setting these 3 calibration voltages, when the battery is discharged to these 3 points, PiPower Pro will calibrate the battery:
-``MaxCapacity = MaxCapacity - Capacity + MaxCapacity * 7%``
-To avoid unlimited calibration at the same point due to voltage fluctuations, calibration is limited to once before charging reaches RCV (Reset Calibration Voltage, default 8.0V).
-Both edv2, edv1, edv0, and rcv can be configured in the service Service, see :ref:`entity` for details.
+これら3つのキャリブレーション電圧を設定した後、バッテリーがこれら3つのポイントに放電されたとき、PiPower Proはバッテリーをキャリブレートします： ``MaxCapacity = MaxCapacity - Capacity + MaxCapacity * 7%`` 。電圧の変動により同じポイントでの無制限のキャリブレーションを避けるため、充電がRCV（Reset Calibration Voltage、デフォルト8.0V）に達する前にキャリブレーションは一度に制限されます。edv2、edv1、edv0、およびrcvはServiceサービスで設定できます。詳細は :ref:`entity` を参照してください。
 
+**インジケータ**
 
-**Indicator**
+クーロンカウンタアルゴリズムが有効になると、バッテリーインジケータもクーロンカウンタモードに切り替わります。ただし、バッテリーレベルの読み取りが正しくない、またはバッテリーレベルがリセットされる可能性がわずかにあります。
 
-When the Coulomb Counter algorithm is enabled, 
-the battery indicator will also switch to the Coulomb Counter mode.
-However, there is a small chance of incorrect battery level readings or even the battery level resetting.
+バッテリーインジケータと電力との関係は次のとおりです：
 
-The relationship between the battery indicators and power is as follows:
+* 4つのLEDすべてが点灯：75％
+* 3つのLEDが点灯：50％
+* 2つのLEDが点灯：25％
+* 1つのLEDが点灯：10％
+* 4つのLEDすべてが消灯：0％、バッテリーの充電が必要です。
 
-* 4 LEDs all on:  75%
-* 3 LEDs on:  50%
-* 2 LEDs on:  25%
-* 1 LED on:  10%
-* 4 LEDs all off: 0%, batteries need to be charged.

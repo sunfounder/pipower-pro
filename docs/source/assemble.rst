@@ -1,45 +1,42 @@
-Assemble the PiPower
+PiPowerの組み立て方
 =======================
 
-After getting familiar with the components in the 
-package, we start to assemble PiPower.
+パッケージ内のコンポーネントに馴染んだ後、PiPowerの組み立てを開始します。
 
-In the next steps, there are a lot of details you need to 
-notice, especially the assembly position of the battery 
-and the clear acrylic back cover.
+次のステップでは、特にバッテリーの取り付け位置や透明アクリル裏蓋に注意しなければならない詳細が多くあります。
 
-#. Attach the Adhesive Tape to the back.
+#. 裏側に粘着テープを貼り付けます。
 
     .. image:: img/assemble1.png
 
-#. Then stick the battery on and plug it in.
+#. 次に、バッテリーを貼り付けて接続します。
 
     .. image:: img/assemble2.png
 
-#. Bind the battery wires with a cable tie.
+#. バッテリーのワイヤーをケーブルタイで束ねます。
 
     .. image:: img/assemble3.png
 
-#. Now screw in four sets of standoffs.
+#. ４組のスペーサーを取り付けます。
 
     .. image:: img/assemble4.png
 
-#. Mount the Raspberry Pi on top.
+#. Raspberry Piを上部に取り付けます。
 
     .. image:: img/assemble5.png
 
-#. Secure a protective plate at the bottom.
+#. 下部に保護プレートを固定します。
 
     .. image:: img/assemble6.png
 
-#. Plug in the USB-C cable to power the Raspberry Pi.
+#. USB-Cケーブルを接続して、Raspberry Piに電力を供給します。
 
     .. image:: img/assemble7.png
 
-#. PiPower needs to be activated with the USB-C cable at the charge port the first time you use it or re-plug the battery
-
+#. PiPowerを初めて使用する際や、バッテリーを再度接続する際は、USB-Cケーブルを充電ポートに接続して起動する必要があります。
 
     .. image:: img/assemble8.png
 
     .. warning::
-        When you put the battery in for the first time or when the battery is unplugged and put in again, the battery will not work properly, at this time, you need to plug the Type C cable into the charging port to turn off the protection circuit, and the battery can be used normally.
+        バッテリーを初めて取り付ける時や、取り外して再度取り付ける時に、正常に動作しない場合があります。この場合、Type Cケーブルを充電ポートに接続して、保護回路をオフにする必要があります。その後、バッテリーは正常に使用できます。
+

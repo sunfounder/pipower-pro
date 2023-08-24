@@ -1,35 +1,36 @@
 FAQ
 ==============
 
-PiPower Pro not working?
+PiPower Proが動作しないのはなぜですか？
 ---------------------------
 
-When you put the battery in for the first time or when the battery is unplugged and put in again, 
-the battery will not work properly.
+初めてバッテリーを入れるときや、バッテリーを外して再度取り付けるとき、
+バッテリーが正常に動作しない場合があります。
 
 
-This is because when the battery is removed, 
-due to the mechanism of the on-board over-discharge protection circuit, 
-the voltage will be considered too low, thus activating the protection circuit; 
+これは、バッテリーが取り外されたとき、
+オンボードの過放電保護回路のメカニズムにより、
+電圧が低すぎると判断され、保護回路が作動するためです。
 
 
-At this time, you need to plug the **Type C** cable into the charging port to release the protection circuit, 
-and the battery can be used normally.
+この時、 **Type C** ケーブルを充電ポートに差し込み、保護回路をリリースする必要があります。
+そうすれば、バッテリーは正常に使用できます。
 
 
 
 
-Which single-board computers can PiPower Pro be used on?
+PiPower Proはどのシングルボードコンピューターで使用できますか？
 ----------------------------------------------------------------------------------
 
-PiPower Pro compatible single-board computers are shown below.
+PiPower Proと互換性のあるシングルボードコンピューターは以下に示されています。
 
 
 .. raw:: html
             
-    <a href="_static/pdf/SBC_compatible.pdf" target="_blank">Compatible List</a>
+    <a href="_static/pdf/SBC_compatible.pdf" target="_blank">互換性リスト</a>
 
     <br/> <br/>
 
 
-.. note:: Functionally Compatible means that it can be powered by PiPower Pro normally. 
+.. note:: 機能的に互換性があるとは、PiPower Proで正常に電源供給できることを意味します。
+

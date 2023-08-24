@@ -1,9 +1,8 @@
-Multiple PiPower Pro Units
+複数のPiPower Proユニット
 ------------------------------------------
 
-If you have multiple PiPower Pro units to use in the same Home Assistant 
-environment, you need to modify the YAML settings. 
-Add ``name_add_mac_suffix: true`` under "esphome."
+もし同じHome Assistant環境内で複数のPiPower Proユニットを使用する場合、YAMLの設定を変更する必要があります。
+"esphome"の下に ``name_add_mac_suffix: true`` を追加してください。
 
 .. code-block::
 

@@ -1,18 +1,18 @@
-Start to Play
+遊び始める
 ==========================
 
-PiPower Pro can be integrated into Home Assistant. 
-To do this, you need to have a Raspberry Pi with HassOS installed. 
-Please follow the link below for setup. 
+PiPower ProはHome Assistantに統合できます。
+これを行うには、HassOSがインストールされたRaspberry Piが必要です。
+セットアップのための下記のリンクをフォローしてください。
 
 .. toctree::
 
     install_hassos
 
-.. note:: If you already have Home Assistant, please ignore.
+.. note:: すでにHome Assistantをお持ちの場合、この部分は無視してください。
 
 
-Setup Your PiPower-Pro Card in Home Assistant:
+Home AssistantでのPiPower-Proカードの設定:
 
 .. toctree::
 
@@ -21,7 +21,7 @@ Setup Your PiPower-Pro Card in Home Assistant:
     code_edit
     entity
 
-The Advanced Usage:
+高度な使用方法:
 
 .. toctree::
 

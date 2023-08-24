@@ -1,20 +1,20 @@
 
 .. _add_card_by_editor:
 
-Add Card by Code Editor 
+コードエディターでカードを追加 
 -----------------------------------
 
-1. After adding any card, you can manually edit the card's yaml file. Click on **SHOW CODE EDITOR** on the card editing page.
+1. カードを追加した後、カードのyamlファイルを手動で編集できます。カード編集ページで **SHOW CODE EDITOR** をクリックしてください。
 
     .. image:: img/sp230803_183128.png
 
-2. Then directly modify the yaml file. We provide some useful PiPower Pro configurations. Please copy the following yaml code directly into the box.
+2. その後、yamlファイルを直接変更してください。私たちはいくつかの便利なPiPower Proの設定を提供しています。以下のyamlコードをそのままボックスにコピーしてください。
 
     .. image:: img/sp230803_183156.png
 
     .. image:: img/sp230803_183626.png
 
-**Quick Overview**
+**簡単な概要**
 
 .. image:: img/ha_btrov.png
 
@@ -67,7 +67,7 @@ Add Card by Code Editor
             needle: true
         columns: 3
 
-**Battery Information**
+**バッテリー情報**
 
 .. image:: img/ha_btrms.png
 
@@ -87,7 +87,7 @@ Add Card by Code Editor
     title: Battery
     columns: 3
 
-**Output Information**
+**出力情報**
 
 .. image:: img/ha_opms.png
 
@@ -104,7 +104,7 @@ Add Card by Code Editor
       - entity: sensor.pipower_pro_output_energy
     title: Output
 
-**Battery Chart**
+**バッテリーチャート**
 
 .. image:: img/ha_btrcht.png
 
@@ -138,7 +138,7 @@ Add Card by Code Editor
             detail: 2
             name: Power
 
-**Output Chart**
+**出力チャート**
 
 .. image:: img/ha_opcht.png
 
@@ -171,7 +171,7 @@ Add Card by Code Editor
             detail: 2
             name: Power
 
-**Settings**
+**設定**
 
 .. image:: img/ha_setting.png
 
