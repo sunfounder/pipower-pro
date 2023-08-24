@@ -56,7 +56,7 @@ Select the SD card you are using.
     :align: center
 
 
-**Step 7**
+**Step 6**
 
 Click the **WRITE** button.
 
@@ -64,7 +64,7 @@ Click the **WRITE** button.
 .. image:: img/sp230627_181444.png
 
 
-**Step 8**
+**Step 7**
 
 If your SD card currently has any files on it, you may wish to back up
 these files first to prevent you from permanently losing them. If there
@@ -74,7 +74,7 @@ is no file to be backed up, click **Yes**.
     :align: center
 
 
-**Step 9**
+**Step 8**
 
 After waiting for a period of time, the following window will appear to
 represent the completion of writing.
@@ -82,7 +82,7 @@ represent the completion of writing.
 .. image:: img/sp230628_161104.png
     :align: center
 
-**Step 10**
+**Step 9**
 
 Next, we will configure WiFi for Pironman.
 
@@ -136,7 +136,7 @@ In the ``my-network`` file, write the following text, replacing ``MY_SSID`` and 
 
 Save and exit the file.
 
-**Step 11**
+**Step 10**
 
 Remove the microSD card from your computer and insert it into the Raspberry Pi. Then, connect the power (and Ethernet cable if needed).
 
@@ -147,7 +147,7 @@ During the first use of Home Assistant, you may need to wait for some time as it
 
 .. image:: img/sp230628_141749.png
 
-**Step 12**
+**Step 11**
 
 Next, you will be prompted to create the first account.
 
