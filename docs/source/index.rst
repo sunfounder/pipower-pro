@@ -2,7 +2,7 @@ PiPower - Raspberry Pi USV mit Batterie
 =============================================
 
 .. image:: img/media1.jpg
-    :width: 600
+    :width: 100%
 
 **Was macht eine USV?**
 
@@ -30,8 +30,10 @@ In Verbindung mit Home Assistant können Benutzer problemlos auf alle Parameterd
 
 Darüber hinaus bietet PiPower Pro externe IO-Schnittstellen zur Steuerung des Ein-/Aus-Zustands von Untergeräten. Mit seiner Open-Source-ESPHome-Konfiguration können Benutzer IO-Funktionalitäten anpassen und das System mit weiteren Sensoren erweitern.
 
+Sollten Sie Fragen bei der Nutzung unseres Produkts haben, senden Sie bitte eine E-Mail an service@sunfounder.com. Wir werden so schnell wie möglich antworten.
+
 .. toctree::
-    Über PiPower <self>
+    Über PiPower Pro<self>
     components
     assemble
     features
