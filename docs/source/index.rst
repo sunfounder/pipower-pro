@@ -2,7 +2,7 @@ PiPower - Raspberry Pi UPS with Battery
 =============================================
 
 .. image:: img/media1.jpg
-    :width: 600
+    :width: 100%
 
 **What a UPS Does?**
 
@@ -31,10 +31,32 @@ When integrated with Home Assistant, users can easily access and review all para
 
 Additionally, PiPower Pro offers external IO interfaces for controlling the on/off state of sub-devices. With its open-source ESPHome configuration, users can customize IO functionalities and expand the system with more sensors.
 
+If you have any questions while using our product, please send an email to service@sunfounder.com. We will respond as soon as possible.
 
+
+**About the display language**
+
+.. note::
+
+    In addition to English, we are working on other languages for this course. 
+    Please contact service@sunfounder.com if you are interested in helping, 
+    and we will give you a free product in return. 
+
+
+Currently the online tutorial supports English, German and Japanese. Please click the **Read the Docs** icon in the lower left corner of the page to change the display language.
+
+.. image:: img/translation.png
+    :align: center
+
+.. raw:: html
+
+    <br/>
+
+
+**Table of contents**
 
 .. toctree::
-    About PiPower <self>
+    About PiPower Pro <self>
     components
     assemble
     features
