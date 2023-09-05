@@ -2,7 +2,7 @@ PiPower - Raspberry Pi用のUPSおよびバッテリー
 =============================================
 
 .. image:: img/media1.jpg
-    :width: 600
+    :width: 100%
 
 **UPSとは何か？**
 
@@ -30,8 +30,10 @@ Home Assistantと統合することで、ユーザーはすべてのパラメー
 
 さらに、PiPower Proは、サブデバイスのオン/オフ状態を制御するための外部IOインターフェースを提供しています。オープンソースのESPHome設定を利用して、ユーザーはIO機能をカスタマイズし、さらに多くのセンサーをシステムに追加することができます。
 
+製品を使用中に何か質問があれば、service@sunfounder.comまでメールをお送りください。できるだけ早くご返信いたします。
+
 .. toctree::
-    PiPowerについて <self>
+    PiPower Proについて <self>
     components
     assemble
     features
