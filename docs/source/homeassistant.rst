@@ -13,7 +13,7 @@ Home AssistantにPiPower Proを追加する
 **ステップ3**
 
 PiPower Proのネットワークを設定します。
-携帯電話（または他のデバイス）でWi-Fiを検索し、 ``PiPower Pro Fallback Hotspot`` に接続します。パスワードは ``123456`` です。
+携帯電話（または他のデバイス）でWi-Fiを検索し、 ``PiPower Pro Fallback Hotspot`` に接続します。パスワードは ``12345678`` です。
 
 .. image:: img/pipw_host.jpg
 
