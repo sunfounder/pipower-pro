@@ -15,7 +15,7 @@ Press the power button to turn it on.
 
 Configure the network for PiPower Pro. 
 Search for Wi-Fi on your phone (or other device) 
-and connect to ``PiPower Pro Fallback Hotspot``. The password is ``123456``.
+and connect to ``PiPower Pro Fallback Hotspot``. The password is ``12345678``.
 
 .. image:: img/pipw_host.jpg
 
