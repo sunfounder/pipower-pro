@@ -11,7 +11,7 @@ Verbinden Sie das USB-C-Ladegerät, bis alle vier Batterieanzeigen leuchten (die
 
 **Schritt 3**
 
-Konfigurieren Sie das Netzwerk für PiPower Pro. Suchen Sie mit Ihrem Handy (oder einem anderen Gerät) nach Wi-Fi und verbinden Sie sich mit dem ``PiPower Pro Fallback Hotspot``. Das Passwort lautet ``123456``.
+Konfigurieren Sie das Netzwerk für PiPower Pro. Suchen Sie mit Ihrem Handy (oder einem anderen Gerät) nach Wi-Fi und verbinden Sie sich mit dem ``PiPower Pro Fallback Hotspot``. Das Passwort lautet ``12345678``.
 
 .. image:: img/pipw_host.jpg
 
