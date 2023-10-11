@@ -1,6 +1,18 @@
 PiPower - Raspberry Pi用のUPSおよびバッテリー
 =============================================
 
+SunFounder PiPowerをお選びいただき、ありがとうございます。
+
+.. note::
+    このドキュメントは以下の言語で利用可能です。
+
+        * |link_german_tutorials|
+        * |link_jp_tutorials|
+        * |link_en_tutorials|
+
+    ご希望の言語でドキュメントにアクセスするために、それぞれのリンクをクリックしてください。
+
+
 .. image:: img/media1.jpg
     :width: 100%
 
